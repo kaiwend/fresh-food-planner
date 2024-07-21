@@ -19,7 +19,10 @@ const sessionId = crypto.randomUUID();
 export const handler: Handlers<Data> = {
   async GET(_req, ctx) {
     console.log("GET");
-    const messages: string[] = ["Hi", "Hello, How are you?"];
+    const messages: string[] = [
+      "👋",
+      "Hi I can help you with planning your meals. What do you like to eat?",
+    ];
     const threadId = crypto.randomUUID();
     console.log({ threadId });
     return await ctx.render({ messages, threadId });
