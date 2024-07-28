@@ -2,6 +2,7 @@ import { Signal } from "https://esm.sh/v135/@preact/signals-core@1.5.1/dist/sign
 
 interface ChatFormProps {
   threadId: string;
+  currentState: Record<string, unknown>;
   messages: Signal<string[]>;
   currentInput: Signal<string>;
   isLoading: Signal<boolean>;
@@ -12,7 +13,16 @@ export const ChatForm = (props: ChatFormProps) => {
 
   return (
     <>
-      <div className="flex flex-col h-[70vh] gap-2 mb-2 overflow-y-scroll no-scrollbar">
+      <div>
+        <h2>State:</h2>
+        <div className="flex flex-col">
+          <div>Input: {props.currentState?.input}</div>
+          <div>LastResponse: {props.currentState?.lastResponse}</div>
+          <div>Diet: {JSON.stringify(props.currentState?.diet)}</div>
+        </div>
+      </div>
+      <hr className="border-black" />
+      <div className="flex flex-col h-[70vh] gap-2 my-2 overflow-y-scroll no-scrollbar">
         {props.messages.value.map((message, index) => (
           <div
             className={
@@ -57,8 +67,8 @@ export const ChatForm = (props: ChatFormProps) => {
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:bg-red-400"
           type="submit"
           form="chat"
-          formaction="/chat"
-          f-partial="/chat"
+          formaction="/"
+          f-partial="/"
           formmethod="POST"
           disabled={props.isLoading.value}
         >

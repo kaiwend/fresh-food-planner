@@ -6,7 +6,10 @@ import { SUPERVISOR_NODE_NAME, supervisorNode } from "./nodes/supervisor.ts";
 import { RESEARCHER_NODE_NAME, researcherNode } from "./nodes/researcher.ts";
 import { ONBOARDING_NODE_NAME, onboardingNode } from "./nodes/onboarding.ts";
 import { PLANNER_NODE_NAME, plannerNode } from "./nodes/planner.ts";
-import { ASK_HUMAN_NODE, askHumanNode } from "./nodes/askHuman.ts";
+import {
+  ASK_HUMAN_ONBOARDING_NODE,
+  askHumanOnboardingNode,
+} from "./nodes/askHuman/askHumanOnboarding.ts";
 
 export enum Intent {
   CHANGE_DIET = "change diet",
@@ -18,7 +21,7 @@ export enum Intent {
 export const zodIntent = z.nativeEnum(Intent);
 type ZodIntent = z.infer<typeof zodIntent>;
 
-const dietSchema = z.object({
+export const dietSchema = z.object({
   goal: z.optional(z.string()),
   dietName: z.optional(z.string()),
   allergies: z.optional(z.array(z.string())),
@@ -50,43 +53,60 @@ export interface AgentState {
 //
 // When the input indicates that the user wants to generate a meal plan, the planner agent is called
 // Can call the researcher agent to get concrete meal recipes
+
 const graphState: StateGraphArgs<AgentState>["channels"] = {
-  input: {
-    value: (_oldInput: string, newInput: string) => newInput,
-  },
-  intent: {
-    value: (_oldIntent: ZodIntent, newIntent: ZodIntent) => newIntent,
-  },
-  chatHistory: {
-    value: (oldMessage: BaseMessage[], newMessage: BaseMessage[]) =>
-      oldMessage.concat(newMessage),
-  },
-  lastResponse: {
-    value: (_oldResponse: string, newResponse: string) => newResponse,
-  },
-  diet: {
-    value: (
-      _oldDiet: z.infer<typeof dietSchema>,
-      newDiet: z.infer<typeof dietSchema>,
-    ) => {
-      return {
-        goal: newDiet.goal,
-        dietName: newDiet.dietName,
-        allergies: newDiet.allergies ?? [],
-        dislikes: newDiet.dislikes ?? [],
-        preferences: newDiet.preferences ?? [],
-      };
-    },
-    default: () => {
-      return {
-        goal: undefined,
-        dietName: undefined,
-        allergies: undefined,
-        dislikes: undefined,
-        preferences: undefined,
-      };
-    },
-  },
+  input: null,
+  intent: null,
+  chatHistory: null,
+  lastResponse: null,
+  diet: null,
+  // input: {
+  //   value: (_oldInput: string, newInput: string) => {
+  //     console.log("setting input: ", newInput);
+  //     console.log("old input: ", _oldInput);
+  //     return newInput;
+  //   },
+  // },
+  // intent: {
+  //   value: (_oldIntent: ZodIntent, newIntent: ZodIntent) => newIntent,
+  // },
+  // chatHistory: {
+  //   value: (oldMessage: BaseMessage[], newMessage: BaseMessage[]) =>
+  //     oldMessage.concat(newMessage),
+  // },
+  // lastResponse: {
+  //   value: (_oldResponse: string, newResponse: string) => newResponse,
+  // },
+  // diet: {
+  //   value: (
+  //     _oldDiet: z.infer<typeof dietSchema>,
+  //     newDiet: z.infer<typeof dietSchema>,
+  //   ) => {
+  //     console.log(
+  //       "setting empty diet: ",
+  //       "newDiet: ",
+  //       newDiet,
+  //       " oldDiet: ",
+  //       _oldDiet,
+  //     );
+  //     return {
+  //       goal: newDiet.goal,
+  //       dietName: newDiet.dietName,
+  //       allergies: newDiet.allergies ?? [],
+  //       dislikes: newDiet.dislikes ?? [],
+  //       preferences: newDiet.preferences ?? [],
+  //     };
+  //   },
+  //   default: () => {
+  //     return {
+  //       goal: undefined,
+  //       dietName: undefined,
+  //       allergies: undefined,
+  //       dislikes: undefined,
+  //       preferences: undefined,
+  //     };
+  //   },
+  // },
 };
 
 const routeToAgent = (state: AgentState) => {
@@ -112,7 +132,7 @@ const workflow = new StateGraph<
   | typeof ONBOARDING_NODE_NAME
   | typeof PLANNER_NODE_NAME
   | typeof RESEARCHER_NODE_NAME
-  | typeof ASK_HUMAN_NODE
+  | typeof ASK_HUMAN_ONBOARDING_NODE
   | "__end__"
 >({ channels: graphState });
 workflow
@@ -120,16 +140,16 @@ workflow
   .addNode(ONBOARDING_NODE_NAME, onboardingNode)
   .addNode(PLANNER_NODE_NAME, plannerNode)
   .addNode(RESEARCHER_NODE_NAME, researcherNode)
-  .addNode(ASK_HUMAN_NODE, askHumanNode)
+  .addNode(ASK_HUMAN_ONBOARDING_NODE, askHumanOnboardingNode)
   .addConditionalEdges(SUPERVISOR_NODE_NAME, routeToAgent)
   .addEdge(START, SUPERVISOR_NODE_NAME)
   .addEdge(RESEARCHER_NODE_NAME, SUPERVISOR_NODE_NAME)
-  .addEdge(ONBOARDING_NODE_NAME, ASK_HUMAN_NODE)
-  .addEdge(ASK_HUMAN_NODE, SUPERVISOR_NODE_NAME)
+  .addEdge(ONBOARDING_NODE_NAME, ASK_HUMAN_ONBOARDING_NODE)
+  .addEdge(ASK_HUMAN_ONBOARDING_NODE, SUPERVISOR_NODE_NAME)
   .addEdge(PLANNER_NODE_NAME, SUPERVISOR_NODE_NAME);
 
 const checkpointer = new MemorySaver();
 export const app = workflow.compile({
   checkpointer,
-  interruptBefore: [ASK_HUMAN_NODE],
+  interruptBefore: [ASK_HUMAN_ONBOARDING_NODE],
 });
