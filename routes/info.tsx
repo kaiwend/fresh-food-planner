@@ -1,17 +1,12 @@
-import { Handlers, PageProps } from "$fresh/server.ts";
-import { app } from "../graph/base.ts";
+import { Handlers } from "$fresh/server.ts";
 
-interface Data {
-  png: ArrayBuffer;
-}
-
-export const handler: Handlers<Data> = {
+export const handler: Handlers = {
   GET(_req, ctx) {
     return ctx.render();
   },
 };
 
-export default async function Info(props: PageProps<Data>) {
+export default function Info() {
   return (
     <div>
       <h1>Info</h1>
