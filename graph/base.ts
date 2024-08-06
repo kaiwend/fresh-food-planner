@@ -1,6 +1,5 @@
-import type { BaseMessage } from "langchain/core";
 import type { StateGraphArgs } from "langchain/langgraph";
-import { MemorySaver, StateGraph, START, END } from "langchain/langgraph";
+import { END, MemorySaver, START, StateGraph } from "langchain/langgraph";
 import { z } from "https://esm.sh/zod@3.23.8";
 import { SUPERVISOR_NODE_NAME, supervisorNode } from "./nodes/supervisor.ts";
 import { RESEARCHER_NODE_NAME, researcherNode } from "./nodes/researcher.ts";

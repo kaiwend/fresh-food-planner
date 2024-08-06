@@ -58,8 +58,9 @@ export const handler: Handlers<Data> = {
       result = await app.invoke(null, graphConfig);
     }
 
-    if (!newMessage || typeof newMessage !== "string")
+    if (!newMessage || typeof newMessage !== "string") {
       return await ctx.render({ threadId, messages: [] });
+    }
 
     const messages = [
       ...oldMessages.filter((message) => message !== LOADING),

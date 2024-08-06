@@ -24,6 +24,7 @@ export const supervisorNode = async (state: AgentState) => {
     const model = llmWithStructuredOutput(outputSchema, "DecideIntent");
 
     const chain = promptTemplate.pipe(model);
+    // const chain = RunnableSequence.from([promptTemplate, model]);
     const result = await chain.invoke({ input: state.input });
 
     return { intent: result.intent };

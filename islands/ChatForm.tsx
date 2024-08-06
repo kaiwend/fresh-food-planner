@@ -25,11 +25,9 @@ export const ChatForm = (props: ChatFormProps) => {
       <div className="flex flex-col h-[70vh] gap-2 my-2 overflow-y-scroll no-scrollbar">
         {props.messages.value.map((message, index) => (
           <div
-            className={
-              index % 2 === 0
-                ? `bg-blue-300 self-start mr-14 ${messageClasses}`
-                : `bg-red-300 self-end ml-14 ${messageClasses}`
-            }
+            className={index % 2 === 0
+              ? `bg-blue-300 self-start mr-14 ${messageClasses}`
+              : `bg-red-300 self-end ml-14 ${messageClasses}`}
           >
             {message}
           </div>

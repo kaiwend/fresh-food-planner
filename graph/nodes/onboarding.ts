@@ -3,6 +3,7 @@ import { ChatPromptTemplate } from "langchain/core/prompts";
 import { MessagesPlaceholder } from "langchain/core/prompts";
 import { llm } from "../utils.ts";
 import { StringOutputParser } from "langchain/core/output_parsers";
+import { Runnable } from "https://esm.sh/v135/@langchain/core@0.2.10/runnables.js";
 
 export const ONBOARDING_NODE_NAME = "ONBOARDING_NODE";
 
@@ -16,7 +17,7 @@ export const onboardingNode = async (state: AgentState) => {
     ["user", "{input}"],
   ]);
 
-  const model = llm();
+  const model: Runnable = llm();
   const chain = promptTemplate.pipe(model).pipe(new StringOutputParser());
   // const chain = RunnableSequence.from([promptTemplate, model]);
   const result = await chain.invoke({

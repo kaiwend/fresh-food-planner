@@ -7,7 +7,8 @@ export const ASK_HUMAN_ONBOARDING_NODE = "askHumanOnboarding";
 // AI generated a question before which is set to the state
 // We now get the human response and need to extract information from it
 export const askHumanOnboardingNode = async (state: AgentState) => {
-  const template = `Extract the diet information from the human response: ${state.input}
+  const template =
+    `Extract the diet information from the human response: ${state.input}
 
 For context, the last question asked was: ${state.lastResponse}
 `;

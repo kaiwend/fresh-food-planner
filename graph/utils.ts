@@ -1,11 +1,14 @@
-import { z } from "https://esm.sh/zod@3.23.8";
+import { Runnable } from "https://esm.sh/v135/@langchain/core@0.2.10/runnables.js";
+import { z, ZodTypeAny } from "https://esm.sh/zod@3.23.8";
 import { ChatOpenAI } from "langchain/openai";
 
-export const llmWithStructuredOutput = (
-  structuredOutput: z.ZodObject,
+export const llmWithStructuredOutput = <
+  T extends z.ZodObject<Record<string, ZodTypeAny>>,
+>(
+  structuredOutput: T,
   functionName: string,
 ) =>
-  llm().withStructuredOutput(structuredOutput, {
+  llm().withStructuredOutput<T>(structuredOutput, {
     name: functionName,
   });
 
