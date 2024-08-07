@@ -10,6 +10,10 @@ import {
   askHumanOnboardingNode,
 } from "./nodes/askHuman/askHumanOnboarding.ts";
 import { cleanObject } from "./utils.ts";
+import {
+  EXTRACT_DIET_DATA_NODE_NAME,
+  extractDietData,
+} from "./nodes/extractDietData.ts";
 
 export enum Intent {
   CHANGE_DIET = "change diet",
@@ -68,53 +72,6 @@ const graphState: StateGraphArgs<AgentState>["channels"] = {
       ...cleanObject(newDiet),
     }),
   },
-  // input: {
-  //   value: (_oldInput: string, newInput: string) => {
-  //     console.log("setting input: ", newInput);
-  //     console.log("old input: ", _oldInput);
-  //     return newInput;
-  //   },
-  // },
-  // intent: {
-  //   value: (_oldIntent: ZodIntent, newIntent: ZodIntent) => newIntent,
-  // },
-  // chatHistory: {
-  //   value: (oldMessage: BaseMessage[], newMessage: BaseMessage[]) =>
-  //     oldMessage.concat(newMessage),
-  // },
-  // lastResponse: {
-  //   value: (_oldResponse: string, newResponse: string) => newResponse,
-  // },
-  // diet: {
-  //   value: (
-  //     _oldDiet: z.infer<typeof dietSchema>,
-  //     newDiet: z.infer<typeof dietSchema>,
-  //   ) => {
-  //     console.log(
-  //       "setting empty diet: ",
-  //       "newDiet: ",
-  //       newDiet,
-  //       " oldDiet: ",
-  //       _oldDiet,
-  //     );
-  //     return {
-  //       goal: newDiet.goal,
-  //       dietName: newDiet.dietName,
-  //       allergies: newDiet.allergies ?? [],
-  //       dislikes: newDiet.dislikes ?? [],
-  //       preferences: newDiet.preferences ?? [],
-  //     };
-  //   },
-  //   default: () => {
-  //     return {
-  //       goal: undefined,
-  //       dietName: undefined,
-  //       allergies: undefined,
-  //       dislikes: undefined,
-  //       preferences: undefined,
-  //     };
-  //   },
-  // },
 };
 
 const routeToAgent = (state: AgentState) => {
@@ -149,11 +106,14 @@ workflow
   .addNode(PLANNER_NODE_NAME, plannerNode)
   .addNode(RESEARCHER_NODE_NAME, researcherNode)
   .addNode(ASK_HUMAN_ONBOARDING_NODE, askHumanOnboardingNode)
+  .addNode(EXTRACT_DIET_DATA_NODE_NAME, extractDietData)
   .addConditionalEdges(SUPERVISOR_NODE_NAME, routeToAgent)
-  .addEdge(START, SUPERVISOR_NODE_NAME)
+  .addEdge(START, EXTRACT_DIET_DATA_NODE_NAME)
+  .addEdge(EXTRACT_DIET_DATA_NODE_NAME, SUPERVISOR_NODE_NAME)
   .addEdge(RESEARCHER_NODE_NAME, SUPERVISOR_NODE_NAME)
   .addEdge(ONBOARDING_NODE_NAME, ASK_HUMAN_ONBOARDING_NODE)
-  .addEdge(ASK_HUMAN_ONBOARDING_NODE, SUPERVISOR_NODE_NAME)
+  .addEdge(ASK_HUMAN_ONBOARDING_NODE, EXTRACT_DIET_DATA_NODE_NAME)
+  .addEdge(EXTRACT_DIET_DATA_NODE_NAME, SUPERVISOR_NODE_NAME)
   .addEdge(PLANNER_NODE_NAME, SUPERVISOR_NODE_NAME);
 
 const checkpointer = new MemorySaver();

@@ -32,6 +32,12 @@ export const supervisorNode = async (state: AgentState) => {
 };
 
 const isDietFilled = (diet: AgentState["diet"]): boolean => {
+  console.log(
+    !!diet?.dietName,
+    !!diet?.allergies,
+    !!diet?.dislikes,
+    !!diet?.preferences,
+  );
   return (
     !!diet?.dietName &&
     !!diet?.allergies &&
