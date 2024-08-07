@@ -1,4 +1,3 @@
-import { Runnable } from "https://esm.sh/v135/@langchain/core@0.2.10/runnables.js";
 import { z, ZodTypeAny } from "https://esm.sh/zod@3.23.8";
 import { ChatOpenAI } from "langchain/openai";
 
@@ -34,3 +33,53 @@ export const llm = (options?: {
       },
     },
   });
+
+type StringOrEmpty = string | null | undefined;
+type StringOrEmptyOrStringOrEmptyArray = StringOrEmpty | StringOrEmpty[];
+type StructuredOutput = Record<
+  string,
+  | StringOrEmptyOrStringOrEmptyArray
+  | Record<string, StringOrEmptyOrStringOrEmptyArray>
+>;
+type CleanedOutput = Record<
+  string,
+  string | string[] | Record<string, string | string[]>
+>;
+
+const isValueFilled = (
+  value:
+    | StringOrEmptyOrStringOrEmptyArray
+    | Record<string, StringOrEmptyOrStringOrEmptyArray>,
+): value is string | string[] | Record<string, string | string[]> => {
+  if (value === "" || value === null || value === undefined) {
+    return false;
+  }
+  if (Array.isArray(value)) {
+    const filtered = value.filter(isValueFilled);
+    return filtered.length > 0;
+  }
+  if (typeof value === "object") {
+    return Object.values(value).filter(isValueFilled).length > 0;
+  }
+  return true;
+};
+
+export const cleanObject = (
+  obj: StructuredOutput,
+): CleanedOutput =>
+  Object.entries(obj).reduce<CleanedOutput>((acc, [key, value]) => {
+    if (value === null || value === undefined) {
+      return acc;
+    }
+    if (typeof value === "object" && !Array.isArray(value)) {
+      const cleanedValue = cleanObject(value);
+      if (Object.keys(cleanedValue).length > 0) {
+        acc[key] = cleanedValue as Record<string, string | string[]>;
+        return acc;
+      }
+    }
+    if (isValueFilled(value)) {
+      acc[key] = value;
+    }
+    return acc;
+  }, {});

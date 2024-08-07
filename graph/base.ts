@@ -9,6 +9,7 @@ import {
   ASK_HUMAN_ONBOARDING_NODE,
   askHumanOnboardingNode,
 } from "./nodes/askHuman/askHumanOnboarding.ts";
+import { cleanObject } from "./utils.ts";
 
 export enum Intent {
   CHANGE_DIET = "change diet",
@@ -58,7 +59,15 @@ const graphState: StateGraphArgs<AgentState>["channels"] = {
   intent: null,
   chatHistory: null,
   lastResponse: null,
-  diet: null,
+  diet: {
+    value: (
+      oldDiet: z.infer<typeof dietSchema>,
+      newDiet: z.infer<typeof dietSchema>,
+    ) => ({
+      ...oldDiet,
+      ...cleanObject(newDiet),
+    }),
+  },
   // input: {
   //   value: (_oldInput: string, newInput: string) => {
   //     console.log("setting input: ", newInput);
