@@ -1,4 +1,4 @@
-import { z, ZodTypeAny } from "https://esm.sh/zod@3.23.8";
+import { z, ZodTypeAny } from "zod";
 import { ChatOpenAI } from "langchain/openai";
 
 export const llmWithStructuredOutput = <
@@ -64,9 +64,7 @@ const isValueFilled = (
   return true;
 };
 
-export const cleanObject = (
-  obj: StructuredOutput,
-): CleanedOutput =>
+export const cleanObject = (obj: StructuredOutput): CleanedOutput =>
   Object.entries(obj).reduce<CleanedOutput>((acc, [key, value]) => {
     if (value === null || value === undefined) {
       return acc;
@@ -83,3 +81,28 @@ export const cleanObject = (
     }
     return acc;
   }, {});
+
+export const transformObjectForPrompt = (
+  obj: StructuredOutput | null,
+): string => {
+  if (!obj) {
+    return "";
+  }
+
+  const cleanedObject = cleanObject(obj);
+  // Check if object is empty
+  if (Object.keys(cleanedObject).length === 0) {
+    return "";
+  }
+
+  return Object.entries(cleanObject(obj))
+    .map(([key, value]) => {
+      if (Array.isArray(value)) {
+        return `${key}: ${value.join(", ")}`;
+      } else if (typeof value === "object") {
+        return [key, transformObjectForPrompt(value)];
+      }
+      return `${key}: ${value}`;
+    })
+    .join("\n");
+};

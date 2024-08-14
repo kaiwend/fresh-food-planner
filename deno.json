@@ -26,14 +26,18 @@
     "tailwindcss/": "npm:/tailwindcss@3.4.1/",
     "tailwindcss/plugin": "npm:/tailwindcss@3.4.1/plugin.js",
     "$std/": "https://deno.land/std@0.216.0/",
-    "langchain/core": "npm:@langchain/core@0.2.18",
-    "langchain/openai": "https://esm.sh/@langchain/openai@0.2.1",
-    "langchain/community": "npm:@langchain/community@0.2.20",
-    "langchain/langgraph": "npm:@langchain/langgraph@0.0.31"
+    "langchain/core": "npm:@langchain/core@0.2.23",
+    "langchain/openai": "https://esm.sh/@langchain/openai@0.2.6",
+    "langchain/community": "npm:@langchain/community@0.2.25",
+    "langchain/langgraph": "npm:@langchain/langgraph@0.0.33",
+    "zod": "https://esm.sh/zod@3.23.8"
   },
   "compilerOptions": {
     "jsx": "react-jsx",
     "jsxImportSource": "preact"
   },
-  "nodeModulesDir": true
+  "nodeModulesDir": true,
+  "fmt": {
+    "semiColons": false
+  }
 }

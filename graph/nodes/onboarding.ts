@@ -2,8 +2,8 @@ import { AgentState } from "../base.ts";
 import { ChatPromptTemplate } from "langchain/core/prompts";
 import { MessagesPlaceholder } from "langchain/core/prompts";
 import { llm } from "../utils.ts";
+import { RunnableSequence } from "langchain/core/runnables";
 import { StringOutputParser } from "langchain/core/output_parsers";
-import { Runnable } from "https://esm.sh/v135/@langchain/core@0.2.10/runnables.js";
 
 export const ONBOARDING_NODE_NAME = "ONBOARDING_NODE";
 
@@ -11,15 +11,21 @@ export const onboardingNode = async (state: AgentState) => {
   const promptTemplate = ChatPromptTemplate.fromMessages([
     [
       "system",
-      "You are a diet planner onboarder. Your goal is to interact with the user to obtain information about the diet that is being aimed for. Check which parts were already asked for. Generate a question to obtain a goal, dislikes, allergies and preferences. But only ask for one thing at a time.",
+      "You are a diet planner. Your goal is to interact with the user to obtain information about it's desired diet. Check which info was already asked for and provided. Generate a question to obtain a piece of information at a time. Don't repeat all of what the user said before, just briefly refer to it positively at first.",
     ],
     new MessagesPlaceholder("chatHistory"),
     ["user", "{input}"],
   ]);
 
-  const model: Runnable = llm();
-  const chain = promptTemplate.pipe(model).pipe(new StringOutputParser());
-  // const chain = RunnableSequence.from([promptTemplate, model]);
+  const model = llm();
+  const chain = RunnableSequence.from<
+    {
+      input: AgentState["input"];
+      chatHistory: AgentState["chatHistory"];
+    },
+    AgentState["lastResponse"]
+  >([promptTemplate, model, new StringOutputParser()], "OnboardingChain");
+
   const result = await chain.invoke({
     input: state.input,
     chatHistory: state.chatHistory,

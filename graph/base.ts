@@ -1,6 +1,6 @@
 import type { StateGraphArgs } from "langchain/langgraph";
 import { END, MemorySaver, START, StateGraph } from "langchain/langgraph";
-import { z } from "https://esm.sh/zod@3.23.8";
+import { z } from "zod";
 import { SUPERVISOR_NODE_NAME, supervisorNode } from "./nodes/supervisor.ts";
 import { RESEARCHER_NODE_NAME, researcherNode } from "./nodes/researcher.ts";
 import { ONBOARDING_NODE_NAME, onboardingNode } from "./nodes/onboarding.ts";
@@ -27,7 +27,6 @@ type ZodIntent = z.infer<typeof zodIntent>;
 
 export const dietSchema = z.object({
   goal: z.optional(z.string()),
-  dietName: z.optional(z.string()),
   allergies: z.optional(z.array(z.string())),
   dislikes: z.optional(z.array(z.string())),
   preferences: z.optional(z.array(z.string())),
@@ -75,14 +74,11 @@ const graphState: StateGraphArgs<AgentState>["channels"] = {
 };
 
 const routeToAgent = (state: AgentState) => {
-  if (state.intent === "change diet") {
-    return RESEARCHER_NODE_NAME;
-  } else if (state.intent === "gather info") {
+  if (state.intent === "change diet" || state.intent === "gather info") {
     return ONBOARDING_NODE_NAME;
-  } else if (
-    state.intent === "generate meal plan" ||
-    state.intent === "research meals"
-  ) {
+  } else if (state.intent === "research meals") {
+    return RESEARCHER_NODE_NAME;
+  } else if (state.intent === "generate meal plan") {
     return PLANNER_NODE_NAME;
   } else {
     return END;
