@@ -20,29 +20,13 @@ export const supervisorNode = async (state: AgentState) => {
   });
   const model = llmWithStructuredOutput(outputSchema, "DecideIntent");
 
-  const chain = RunnableSequence.from([promptTemplate, model]);
+  const chain = RunnableSequence.from<
+    Pick<AgentState, "input">,
+    Pick<AgentState, "intent">
+  >([promptTemplate, model]);
   const result = await chain.invoke({ input: state.input });
 
   console.log("[supervisor] INTENT: ", { result });
 
   return { intent: result.intent };
-  // }
 };
-
-// const isDietFilled = (diet: AgentState["diet"]): boolean => {
-//   console.log(
-//     !!diet?.dietName,
-//     !!diet?.allergies,
-//     !!diet?.dislikes,
-//     !!diet?.preferences,
-//   );
-//   return (
-//     !!diet?.dietName &&
-//     !!diet?.allergies &&
-//     diet?.allergies?.length > 0 &&
-//     !!diet?.dislikes &&
-//     diet?.dislikes?.length > 0 &&
-//     !!diet?.preferences &&
-//     diet?.preferences?.length > 0
-//   );
-// };
