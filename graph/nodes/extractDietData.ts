@@ -1,3 +1,4 @@
+import { RunnableSequence } from "langchain/core/runnables";
 import { AgentState, dietSchema } from "../base.ts";
 import { llmWithStructuredOutput, transformObjectForPrompt } from "../utils.ts";
 import { PromptTemplate } from "langchain/core/prompts";
@@ -12,7 +13,7 @@ Extract the diet information from the human response:
 For context, the last question asked was:
 \`\`\`${state.lastResponse}\`\`\`
 
-After that use that information to merge it with the existing information. The information above is more recent. If it contradicts, prefer the newest one over the existing.
+After that use that information to merge it with the existing information. The information above is more recent. If it contradicts, prefer the newest one over the existing. Preserve as much information as possible.
 
 Existing information:
 \`\`\`
@@ -21,8 +22,13 @@ Existing information:
 `;
   const prompt = PromptTemplate.fromTemplate(template);
   const model = llmWithStructuredOutput(dietSchema, "ExtractDietInfo");
-
-  const chain = prompt.pipe(model);
+  const chain = RunnableSequence.from<
+    Pick<AgentState, "input" | "lastResponse"> & { dietInfo: string },
+    Pick<AgentState, "diet">
+  >([prompt, model], {
+    name: "ExtractDietDataChain",
+  });
+  // const chain = prompt.pipe(model);
   const result = await chain.invoke({
     input: state.input,
     lastResponse: state.lastResponse,

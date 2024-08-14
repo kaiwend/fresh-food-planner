@@ -27,7 +27,7 @@
     "tailwindcss/plugin": "npm:/tailwindcss@3.4.1/plugin.js",
     "$std/": "https://deno.land/std@0.216.0/",
     "langchain/core": "npm:@langchain/core@0.2.23",
-    "langchain/openai": "https://esm.sh/@langchain/openai@0.2.6",
+    "langchain/openai": "npm:@langchain/openai@0.2.6",
     "langchain/community": "npm:@langchain/community@0.2.25",
     "langchain/langgraph": "npm:@langchain/langgraph@0.0.33",
     "zod": "https://esm.sh/zod@3.23.8"

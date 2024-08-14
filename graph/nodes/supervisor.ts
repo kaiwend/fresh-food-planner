@@ -7,9 +7,6 @@ import { llmWithStructuredOutput } from "../utils.ts";
 export const SUPERVISOR_NODE_NAME = "SUPERVISOR_NODE";
 
 export const supervisorNode = async (state: AgentState) => {
-  // if (!isDietFilled(state.diet)) {
-  //   return { intent: "gather info" };
-  // } else {
   const promptTemplate = ChatPromptTemplate.fromMessages([
     [
       "system",
