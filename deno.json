@@ -29,7 +29,7 @@
     "langchain/core": "npm:@langchain/core@0.2.23",
     "langchain/openai": "npm:@langchain/openai@0.2.6",
     "langchain/community": "npm:@langchain/community@0.2.25",
-    "langchain/langgraph": "npm:@langchain/langgraph@0.0.33",
+    "langchain/langgraph": "npm:@langchain/langgraph@0.0.34",
     "zod": "https://esm.sh/zod@3.23.8"
   },
   "compilerOptions": {

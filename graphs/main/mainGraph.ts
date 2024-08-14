@@ -9,11 +9,11 @@ import {
   ASK_HUMAN_ONBOARDING_NODE,
   askHumanOnboardingNode,
 } from "./nodes/askHuman/askHumanOnboarding.ts";
-import { cleanObject } from "./utils.ts";
 import {
   EXTRACT_DIET_DATA_NODE_NAME,
   extractDietData,
 } from "./nodes/extractDietData.ts";
+import { cleanObject } from "../utils.ts";
 
 export enum Intent {
   CHANGE_DIET = "change diet",
@@ -32,10 +32,12 @@ export const dietSchema = z.object({
   preferences: z.optional(z.array(z.string())),
 });
 
+export type Diet = z.infer<typeof dietSchema>;
+
 export interface AgentState {
   input: string;
   intent: ZodIntent;
-  diet: z.infer<typeof dietSchema>;
+  diet: Diet;
   chatHistory: string[];
   lastResponse: string;
 }
@@ -87,15 +89,13 @@ const routeToAgent = (state: AgentState) => {
 
 const workflow = new StateGraph<
   AgentState,
+  AgentState,
   Partial<AgentState>,
-  | "__start__"
-  | typeof SUPERVISOR_NODE_NAME
-  | typeof ONBOARDING_NODE_NAME
-  | typeof PLANNER_NODE_NAME
-  | typeof RESEARCHER_NODE_NAME
-  | typeof ASK_HUMAN_ONBOARDING_NODE
-  | "__end__"
->({ channels: graphState });
+  typeof ASK_HUMAN_ONBOARDING_NODE
+>({
+  channels: graphState,
+});
+
 workflow
   .addNode(SUPERVISOR_NODE_NAME, supervisorNode)
   .addNode(ONBOARDING_NODE_NAME, onboardingNode)

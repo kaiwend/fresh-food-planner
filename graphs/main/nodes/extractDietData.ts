@@ -1,7 +1,11 @@
 import { RunnableSequence } from "langchain/core/runnables";
-import { AgentState, dietSchema } from "../base.ts";
-import { llmWithStructuredOutput, transformObjectForPrompt } from "../utils.ts";
 import { PromptTemplate } from "langchain/core/prompts";
+import { AgentState, dietSchema } from "../mainGraph.ts";
+import {
+  llmWithStructuredOutput,
+  transformObjectForPrompt,
+} from "../../utils.ts";
+import { z } from "zod";
 
 export const EXTRACT_DIET_DATA_NODE_NAME = "extractDietData";
 
@@ -35,5 +39,5 @@ Existing information:
 
   console.log({ result });
 
-  return { diet: result };
+  return { diet: result as z.infer<typeof dietSchema> };
 };

@@ -1,4 +1,4 @@
-import { AgentState } from "../base.ts";
+import { AgentState } from "../mainGraph.ts";
 
 export const RESEARCHER_NODE_NAME = "RESEARCHER_NODE";
 

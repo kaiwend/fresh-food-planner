@@ -1,8 +1,7 @@
-import { AgentState, Intent } from "../base.ts";
 import { ChatPromptTemplate } from "langchain/core/prompts";
 import { z } from "zod";
 import { RunnableSequence } from "langchain/core/runnables";
-import { llmWithStructuredOutput } from "../utils.ts";
+import { AgentState, Intent } from "../mainGraph.ts";
 
 export const SUPERVISOR_NODE_NAME = "SUPERVISOR_NODE";
 
