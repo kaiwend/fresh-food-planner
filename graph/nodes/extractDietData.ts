@@ -25,9 +25,7 @@ Existing information:
   const chain = RunnableSequence.from<
     Pick<AgentState, "input" | "lastResponse"> & { dietInfo: string },
     Pick<AgentState, "diet">
-  >([prompt, model], {
-    name: "ExtractDietDataChain",
-  });
+  >([prompt, model], "ExtractDietInfoChain");
   // const chain = prompt.pipe(model);
   const result = await chain.invoke({
     input: state.input,
