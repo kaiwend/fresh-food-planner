@@ -1,8 +1,9 @@
 import { Handlers, PageProps } from "$fresh/server.ts";
 import { Partial } from "$fresh/runtime.ts";
-import { app } from "../graph/base.ts";
 import { ChatForm } from "../islands/ChatForm.tsx";
 import { useSignal } from "@preact/signals";
+import { mainGraph } from "../graphs/main/mainGraph.ts";
+import { ASK_HUMAN_ONBOARDING_NODE } from "../graphs/main/nodes/askHuman/askHumanOnboarding.ts";
 
 interface Data {
   threadId: string;
@@ -41,21 +42,24 @@ export const handler: Handlers<Data> = {
       },
     };
 
-    const graphState = await app.getState(graphConfig);
+    const graphState = await mainGraph.getState(graphConfig);
     const chatHistory = oldMessages.filter((message) => message !== LOADING);
     let result;
     if (!graphState.createdAt) {
-      result = await app.invoke(
+      result = await mainGraph.invoke(
         { input: newMessage, chatHistory },
         graphConfig,
       );
     } else {
-      await app.updateState(graphConfig, {
-        input: newMessage,
-        chatHistory,
-        // asNode: ASK_HUMAN_ONBOARDING_NODE,
-      });
-      result = await app.invoke(null, graphConfig);
+      await mainGraph.updateState(
+        graphConfig,
+        {
+          input: newMessage,
+          chatHistory,
+        },
+        ASK_HUMAN_ONBOARDING_NODE,
+      );
+      result = await mainGraph.invoke(null, graphConfig);
     }
 
     if (!newMessage || typeof newMessage !== "string") {

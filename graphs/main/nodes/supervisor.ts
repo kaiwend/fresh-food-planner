@@ -2,10 +2,14 @@ import { ChatPromptTemplate } from "langchain/core/prompts";
 import { z } from "zod";
 import { RunnableSequence } from "langchain/core/runnables";
 import { AgentState, Intent } from "../mainGraph.ts";
+import { llmWithStructuredOutput } from "../../utils.ts";
 
 export const SUPERVISOR_NODE_NAME = "SUPERVISOR_NODE";
 
 export const supervisorNode = async (state: AgentState) => {
+  if (!state.onboardingComplete) {
+    return { intent: Intent.GATHER_INFO };
+  }
   const promptTemplate = ChatPromptTemplate.fromMessages([
     [
       "system",
@@ -25,7 +29,7 @@ export const supervisorNode = async (state: AgentState) => {
   >([promptTemplate, model]);
   const result = await chain.invoke({ input: state.input });
 
-  console.log("[supervisor] INTENT: ", { result });
+  console.log("[supervisor] intent: ", result.intent, "\n");
 
   return { intent: result.intent };
 };

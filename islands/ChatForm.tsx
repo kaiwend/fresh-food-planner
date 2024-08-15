@@ -1,8 +1,10 @@
 import { Signal } from "https://esm.sh/v135/@preact/signals-core@1.5.1/dist/signals-core.js";
+import { transformObjectForPrompt } from "../graphs/utils.ts";
+import { AgentState } from "../graphs/main/mainGraph.ts";
 
 interface ChatFormProps {
   threadId: string;
-  currentState: Record<string, unknown>;
+  currentState: AgentState;
   messages: Signal<string[]>;
   currentInput: Signal<string>;
   isLoading: Signal<boolean>;
@@ -14,20 +16,19 @@ export const ChatForm = (props: ChatFormProps) => {
   return (
     <>
       <div>
-        <h2>State:</h2>
         <div className="flex flex-col">
-          <div>Input: {props.currentState?.input}</div>
-          <div>LastResponse: {props.currentState?.lastResponse}</div>
-          <div>Diet: {JSON.stringify(props.currentState?.diet)}</div>
+          <div>Diet: {transformObjectForPrompt(props.currentState?.diet)}</div>
         </div>
       </div>
       <hr className="border-black" />
       <div className="flex flex-col h-[70vh] gap-2 my-2 overflow-y-scroll no-scrollbar">
         {props.messages.value.map((message, index) => (
           <div
-            className={index % 2 === 0
-              ? `bg-blue-300 self-start mr-14 ${messageClasses}`
-              : `bg-red-300 self-end ml-14 ${messageClasses}`}
+            className={
+              index % 2 === 0
+                ? `bg-blue-300 self-start mr-14 ${messageClasses}`
+                : `bg-red-300 self-end ml-14 ${messageClasses}`
+            }
           >
             {message}
           </div>

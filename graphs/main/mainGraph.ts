@@ -11,6 +11,7 @@ import {
 } from "./nodes/askHuman/askHumanOnboarding.ts";
 import {
   EXTRACT_DIET_DATA_NODE_NAME,
+  INITIAL_EXTRACTION_NODE_NAME,
   extractDietData,
 } from "./nodes/extractDietData.ts";
 import { cleanObject } from "../utils.ts";
@@ -26,18 +27,40 @@ export const zodIntent = z.nativeEnum(Intent);
 type ZodIntent = z.infer<typeof zodIntent>;
 
 export const dietSchema = z.object({
-  goal: z.optional(z.string()),
+  goal: z
+    .optional(z.string())
+    .describe('Overall goal of the diet, e.g. "lose weight"'),
   allergies: z.optional(z.array(z.string())),
   dislikes: z.optional(z.array(z.string())),
-  preferences: z.optional(z.array(z.string())),
+  preferences: z
+    .optional(z.array(z.string()))
+    .describe(
+      "Preferred ingredients, cuisine type or meals, should contain at least 5 items",
+    ),
+  eatingSchedule: z
+    .optional(z.string())
+    .describe(
+      "How many times the user eats per day, when he eats and if he eats small, medium or large meal",
+    ),
 });
 
 export type Diet = z.infer<typeof dietSchema>;
+
+export const onboardingSchema = z.object({
+  onboardingComplete: z
+    .boolean()
+    .default(false)
+    .describe("Flag to indicate if the onboarding is complete"),
+  diet: dietSchema,
+});
+
+export type OnboardingSchema = z.infer<typeof onboardingSchema>;
 
 export interface AgentState {
   input: string;
   intent: ZodIntent;
   diet: Diet;
+  onboardingComplete: boolean;
   chatHistory: string[];
   lastResponse: string;
 }
@@ -64,6 +87,7 @@ const graphState: StateGraphArgs<AgentState>["channels"] = {
   intent: null,
   chatHistory: null,
   lastResponse: null,
+  onboardingComplete: null,
   diet: {
     value: (
       oldDiet: z.infer<typeof dietSchema>,
@@ -76,9 +100,7 @@ const graphState: StateGraphArgs<AgentState>["channels"] = {
 };
 
 const routeToAgent = (state: AgentState) => {
-  if (state.intent === "change diet" || state.intent === "gather info") {
-    return ONBOARDING_NODE_NAME;
-  } else if (state.intent === "research meals") {
+  if (state.intent === "research meals") {
     return RESEARCHER_NODE_NAME;
   } else if (state.intent === "generate meal plan") {
     return PLANNER_NODE_NAME;
@@ -97,23 +119,38 @@ const workflow = new StateGraph<
 });
 
 workflow
+  .addNode(INITIAL_EXTRACTION_NODE_NAME, extractDietData)
   .addNode(SUPERVISOR_NODE_NAME, supervisorNode)
   .addNode(ONBOARDING_NODE_NAME, onboardingNode)
   .addNode(PLANNER_NODE_NAME, plannerNode)
   .addNode(RESEARCHER_NODE_NAME, researcherNode)
   .addNode(ASK_HUMAN_ONBOARDING_NODE, askHumanOnboardingNode)
   .addNode(EXTRACT_DIET_DATA_NODE_NAME, extractDietData)
+
+  .addEdge(START, INITIAL_EXTRACTION_NODE_NAME)
+  .addEdge(INITIAL_EXTRACTION_NODE_NAME, SUPERVISOR_NODE_NAME)
   .addConditionalEdges(SUPERVISOR_NODE_NAME, routeToAgent)
-  .addEdge(START, EXTRACT_DIET_DATA_NODE_NAME)
-  .addEdge(EXTRACT_DIET_DATA_NODE_NAME, SUPERVISOR_NODE_NAME)
-  .addEdge(RESEARCHER_NODE_NAME, SUPERVISOR_NODE_NAME)
+
   .addEdge(ONBOARDING_NODE_NAME, ASK_HUMAN_ONBOARDING_NODE)
   .addEdge(ASK_HUMAN_ONBOARDING_NODE, EXTRACT_DIET_DATA_NODE_NAME)
-  .addEdge(EXTRACT_DIET_DATA_NODE_NAME, SUPERVISOR_NODE_NAME)
+  .addConditionalEdges(
+    EXTRACT_DIET_DATA_NODE_NAME,
+    ({ onboardingComplete }) => {
+      if (onboardingComplete) {
+        return RESEARCHER_NODE_NAME;
+      }
+      return ONBOARDING_NODE_NAME;
+    },
+  )
+
+  .addEdge(RESEARCHER_NODE_NAME, SUPERVISOR_NODE_NAME)
+
   .addEdge(PLANNER_NODE_NAME, SUPERVISOR_NODE_NAME);
 
 const checkpointer = new MemorySaver();
-export const app = workflow.compile({
+export const mainGraph = workflow.compile({
   checkpointer,
   interruptBefore: [ASK_HUMAN_ONBOARDING_NODE],
 });
+
+// @TODO: Find a way to loop in between onboarding node until enough data is extracted - then pass on. Should we set some flag when we are done?

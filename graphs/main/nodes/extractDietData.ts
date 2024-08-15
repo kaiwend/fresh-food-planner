@@ -1,43 +1,51 @@
-import { RunnableSequence } from "langchain/core/runnables";
+import { RunnableSequence, Runnable } from "langchain/core/runnables";
 import { PromptTemplate } from "langchain/core/prompts";
-import { AgentState, dietSchema } from "../mainGraph.ts";
+import {
+  AgentState,
+  OnboardingSchema,
+  onboardingSchema,
+} from "../mainGraph.ts";
 import {
   llmWithStructuredOutput,
   transformObjectForPrompt,
 } from "../../utils.ts";
-import { z } from "zod";
+import { tool } from "langchain/core/tools";
 
+export const INITIAL_EXTRACTION_NODE_NAME = "initialDietDataExtraction";
 export const EXTRACT_DIET_DATA_NODE_NAME = "extractDietData";
 
 export const extractDietData = async (state: AgentState) => {
-  const template = `Your goal is to extract information from the following
+  const template = `You are an onboarding professional that is onboarding a user to a diet planner app.
+
+You will receive the last pair of a chat history. Your goal is to extract information from those extracted information, merge that extracted information with some existing information. Decide when the onboarding is concluded. In case the user indicates that he put in enough information, conclude the onboarding by setting onboardingComplete to true.
+
 Extract the diet information from the human response:
 \`\`\`${state.input}\`\`\`
 
 For context, the last question asked was:
 \`\`\`${state.lastResponse}\`\`\`
 
-After that use that information to merge it with the existing information. The information above is more recent. If it contradicts, prefer the newest one over the existing. Preserve as much information as possible.
-
-Existing information:
+Existing information to merge with:
 \`\`\`
 {dietInfo}
 \`\`\`
 `;
-  const prompt = PromptTemplate.fromTemplate(template);
-  const model = llmWithStructuredOutput(dietSchema, "ExtractDietInfo");
+  const prompt: Runnable = PromptTemplate.fromTemplate(template);
+  const model = llmWithStructuredOutput(onboardingSchema, "ExtractDietInfo");
   const chain = RunnableSequence.from<
     Pick<AgentState, "input" | "lastResponse"> & { dietInfo: string },
-    Pick<AgentState, "diet">
+    OnboardingSchema
   >([prompt, model], "ExtractDietInfoChain");
-  // const chain = prompt.pipe(model);
   const result = await chain.invoke({
     input: state.input,
     lastResponse: state.lastResponse,
     dietInfo: transformObjectForPrompt(state.diet),
   });
 
-  console.log({ result });
+  console.group("[extractDietData]");
+  console.log(`diet:\n${transformObjectForPrompt(result.diet)}\n`);
+  console.log(`onboardingComplete: ${result.onboardingComplete}\n`);
+  console.groupEnd();
 
-  return { diet: result as z.infer<typeof dietSchema> };
+  return { diet: result.diet, onboardingComplete: result.onboardingComplete };
 };
