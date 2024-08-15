@@ -131,6 +131,7 @@ workflow
   .addEdge(INITIAL_EXTRACTION_NODE_NAME, SUPERVISOR_NODE_NAME)
   .addConditionalEdges(SUPERVISOR_NODE_NAME, routeToAgent)
 
+  // Onboarding
   .addEdge(ONBOARDING_NODE_NAME, ASK_HUMAN_ONBOARDING_NODE)
   .addEdge(ASK_HUMAN_ONBOARDING_NODE, EXTRACT_DIET_DATA_NODE_NAME)
   .addConditionalEdges(
@@ -143,8 +144,10 @@ workflow
     },
   )
 
+  // Research
   .addEdge(RESEARCHER_NODE_NAME, SUPERVISOR_NODE_NAME)
 
+  // Planner
   .addEdge(PLANNER_NODE_NAME, SUPERVISOR_NODE_NAME);
 
 const checkpointer = new MemorySaver();
