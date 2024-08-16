@@ -8,7 +8,8 @@
     "build": "deno run -A dev.ts build",
     "preview": "deno run -A main.ts",
     "update": "deno run -A -r https://fresh.deno.dev/update .",
-    "generate-info-image": "deno run -A generate-info-image.ts"
+    "generate-info-image": "deno run -A scripts/generate-info-image.ts",
+    "test-edamam-recipe": "deno run --env -A scripts/test-edamam-recipe.ts"
   },
   "lint": {
     "rules": {
