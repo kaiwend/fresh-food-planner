@@ -1,4 +1,4 @@
-import { mainGraph } from "./graphs/main/mainGraph.ts";
+import { mainGraph } from "../graphs/main/mainGraph.ts";
 
 console.log("generating graph image");
 

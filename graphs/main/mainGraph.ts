@@ -2,9 +2,7 @@ import type { StateGraphArgs } from "langchain/langgraph";
 import { END, MemorySaver, START, StateGraph } from "langchain/langgraph";
 import { z } from "zod";
 import { SUPERVISOR_NODE_NAME, supervisorNode } from "./nodes/supervisor.ts";
-import { RESEARCHER_NODE_NAME, researcherNode } from "./nodes/researcher.ts";
 import { ONBOARDING_NODE_NAME, onboardingNode } from "./nodes/onboarding.ts";
-import { PLANNER_NODE_NAME, plannerNode } from "./nodes/planner.ts";
 import {
   ASK_HUMAN_ONBOARDING_NODE,
   askHumanOnboardingNode,
@@ -100,10 +98,15 @@ const graphState: StateGraphArgs<AgentState>["channels"] = {
 };
 
 const routeToAgent = (state: AgentState) => {
-  if (state.intent === "research meals") {
-    return RESEARCHER_NODE_NAME;
-  } else if (state.intent === "generate meal plan") {
-    return PLANNER_NODE_NAME;
+  if (
+    state.intent === Intent.GATHER_INFO ||
+    state.intent === Intent.CHANGE_DIET
+  ) {
+    return ONBOARDING_NODE_NAME;
+    // } else if (state.intent === Intent.RESEARCH_MEALS) {
+    //   return RESEARCHER_NODE_NAME;
+    // } else if (state.intent === Intent.GENERATE_MEAL_PLAN) {
+    //   return PLANNER_NODE_NAME;
   } else {
     return END;
   }
@@ -122,8 +125,8 @@ workflow
   .addNode(INITIAL_EXTRACTION_NODE_NAME, extractDietData)
   .addNode(SUPERVISOR_NODE_NAME, supervisorNode)
   .addNode(ONBOARDING_NODE_NAME, onboardingNode)
-  .addNode(PLANNER_NODE_NAME, plannerNode)
-  .addNode(RESEARCHER_NODE_NAME, researcherNode)
+  // .addNode(PLANNER_NODE_NAME, plannerNode)
+  // .addNode(RESEARCHER_NODE_NAME, researcherNode)
   .addNode(ASK_HUMAN_ONBOARDING_NODE, askHumanOnboardingNode)
   .addNode(EXTRACT_DIET_DATA_NODE_NAME, extractDietData)
 
@@ -138,17 +141,18 @@ workflow
     EXTRACT_DIET_DATA_NODE_NAME,
     ({ onboardingComplete }) => {
       if (onboardingComplete) {
-        return RESEARCHER_NODE_NAME;
+        // return RESEARCHER_NODE_NAME;
+        return END;
       }
       return ONBOARDING_NODE_NAME;
     },
-  )
+  );
 
-  // Research
-  .addEdge(RESEARCHER_NODE_NAME, SUPERVISOR_NODE_NAME)
+// Research
+// .addEdge(RESEARCHER_NODE_NAME, SUPERVISOR_NODE_NAME)
 
-  // Planner
-  .addEdge(PLANNER_NODE_NAME, SUPERVISOR_NODE_NAME);
+// Planner
+// .addEdge(PLANNER_NODE_NAME, SUPERVISOR_NODE_NAME);
 
 const checkpointer = new MemorySaver();
 export const mainGraph = workflow.compile({

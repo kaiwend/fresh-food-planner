@@ -50,6 +50,8 @@ ${behaviourInstructions.map((instruction) => `${instruction}`).join("\n")}
     dietInfo: transformObjectForPrompt(state.diet),
   });
 
+  console.log({ result });
+
   console.log("[onboarding] lastResponse: ", result, "\n");
 
   return { lastResponse: result };

@@ -1,5 +1,6 @@
 import { z, ZodTypeAny } from "zod";
 import { ChatOpenAI } from "langchain/openai";
+import { BaseCheckpointSaver } from "langchain/langgraph";
 
 export const llmWithStructuredOutput = <
   T extends z.ZodObject<Record<string, ZodTypeAny>>,
@@ -106,3 +107,16 @@ export const transformObjectForPrompt = (
     })
     .join("\n");
 };
+
+// export class DenoKvSaver extends BaseCheckpointSaver {
+//   async getTuple(config: RunnableConfig): Promise<CheckpointTuple | undefined> {
+//     const { thread_id, checkpoint_id  } = config.configurable || {}
+//
+//     const kv = await Deno.openKv("/_storage");
+//     try {
+//       if (checkpoint_id) {
+//
+//       }
+//     }
+//   }
+// }

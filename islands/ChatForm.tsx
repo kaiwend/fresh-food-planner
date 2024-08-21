@@ -4,6 +4,7 @@ import { AgentState } from "../graphs/main/mainGraph.ts";
 
 interface ChatFormProps {
   threadId: string;
+  sessionId: string;
   currentState: AgentState;
   messages: Signal<string[]>;
   currentInput: Signal<string>;
@@ -57,6 +58,7 @@ export const ChatForm = (props: ChatFormProps) => {
           }}
         />
         <input type="hidden" name="thread-id" value={props.threadId} />
+        <input type="hidden" name="session-id" value={props.sessionId} />
         <input
           type="hidden"
           name="all-chat-messages"
@@ -66,8 +68,8 @@ export const ChatForm = (props: ChatFormProps) => {
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:bg-red-400"
           type="submit"
           form="chat"
-          formaction="/"
-          f-partial="/"
+          formaction={`/${props.sessionId}/onboarding`}
+          f-partial={`/${props.sessionId}/onboarding`}
           formmethod="POST"
           disabled={props.isLoading.value}
         >

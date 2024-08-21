@@ -9,7 +9,6 @@ import {
   llmWithStructuredOutput,
   transformObjectForPrompt,
 } from "../../utils.ts";
-import { tool } from "langchain/core/tools";
 
 export const INITIAL_EXTRACTION_NODE_NAME = "initialDietDataExtraction";
 export const EXTRACT_DIET_DATA_NODE_NAME = "extractDietData";
