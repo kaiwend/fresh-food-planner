@@ -13,6 +13,7 @@ import {
   extractDietData,
 } from "./nodes/extractDietData.ts";
 import { cleanObject } from "../utils.ts";
+import { Diet, dietSchema } from "@/types/diet.ts";
 
 export enum Intent {
   CHANGE_DIET = "change diet",
@@ -23,26 +24,6 @@ export enum Intent {
 
 export const zodIntent = z.nativeEnum(Intent);
 type ZodIntent = z.infer<typeof zodIntent>;
-
-export const dietSchema = z.object({
-  goal: z
-    .optional(z.string())
-    .describe('Overall goal of the diet, e.g. "lose weight"'),
-  allergies: z.optional(z.array(z.string())),
-  dislikes: z.optional(z.array(z.string())),
-  preferences: z
-    .optional(z.array(z.string()))
-    .describe(
-      "Preferred ingredients, cuisine type or meals, should contain at least 5 items",
-    ),
-  eatingSchedule: z
-    .optional(z.string())
-    .describe(
-      "How many times the user eats per day, when he eats and if he eats small, medium or large meal",
-    ),
-});
-
-export type Diet = z.infer<typeof dietSchema>;
 
 export const onboardingSchema = z.object({
   onboardingComplete: z
@@ -61,24 +42,8 @@ export interface AgentState {
   onboardingComplete: boolean;
   chatHistory: string[];
   lastResponse: string;
+  agentScratchpad: string;
 }
-
-// Overall plan
-// Research agent to create outline of a certain diet type
-// onboarding kind of agent to help user get started and gather info like allergies and dislike etc.
-// executing agent to actually plan meals for dates
-
-// Overall flow: always start with supervisor node
-//
-// supervisor decides what to do next based on the input
-//
-// When the input indicates that the user wants to change the diet, the researcher agent is called
-//
-// When the input indicates that the user wants to change some concrete details of the diet, the onboarding agent is called
-// Or when the diet schema is not complete, the onboarding agent is called
-//
-// When the input indicates that the user wants to generate a meal plan, the planner agent is called
-// Can call the researcher agent to get concrete meal recipes
 
 const graphState: StateGraphArgs<AgentState>["channels"] = {
   input: null,
@@ -94,6 +59,10 @@ const graphState: StateGraphArgs<AgentState>["channels"] = {
       ...oldDiet,
       ...cleanObject(newDiet),
     }),
+  },
+  agentScratchpad: {
+    value: (oldScratchpad: string, newScratchpad: string) =>
+      `${oldScratchpad} ${newScratchpad}`,
   },
 };
 

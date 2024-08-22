@@ -1,4 +1,5 @@
 import { Handlers, PageProps } from "$fresh/server.ts";
+import Plan from "../../components/Plan/index.tsx";
 import { Diet } from "../../graphs/main/mainGraph.ts";
 
 interface Data {
@@ -15,8 +16,6 @@ export const handler: Handlers<Data> = {
   },
 };
 
-const PlanPage = (props: PageProps<Data>) => {
-  return <div>PlanPage: {JSON.stringify(props.data)}</div>;
-};
+const PlanPage = (props: PageProps<Data>) => <Plan diet={props.data.diet} />;
 
 export default PlanPage;

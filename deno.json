@@ -31,7 +31,9 @@
     "langchain/openai": "npm:@langchain/openai@0.2.6",
     "langchain/community": "npm:@langchain/community@0.2.25",
     "langchain/langgraph": "npm:@langchain/langgraph@0.0.33",
-    "zod": "https://esm.sh/zod@3.23.8"
+    "zod": "https://esm.sh/zod@3.23.8",
+    "@/types/": "./types/",
+    "@/ai/": "./ai/"
   },
   "compilerOptions": {
     "jsx": "react-jsx",
