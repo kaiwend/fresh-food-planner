@@ -11,7 +11,7 @@ type ExtractDietDataChainInput = {
 
 const template = `You are an onboarding professional that is onboarding a user to a diet planner app.
 
-You will receive the last pair of a chat history. Your goal is to extract information from those extracted information, merge that extracted information with some existing information. Decide when the onboarding is concluded. In case the user indicates that he put in enough information, conclude the onboarding by setting onboardingComplete to true.
+You will receive the last pair of a chat history. Your goal is to extract information from those extracted information, merge that extracted information with some existing information. Preserve as much detail and refrain from losing any information at all cost.
 
 Extract the diet information from the human response:
 \`\`\`{input}\`\`\`
@@ -26,7 +26,7 @@ Existing information to merge with:
 `;
 const prompt: Runnable = PromptTemplate.fromTemplate(template);
 const model = llmWithStructuredOutput(dietSchema, "ExtractDietInfo", {
-  latency: 4.0,
+  latency: 2.0,
 });
 
 export const extractDietDataChain = RunnableSequence.from<
