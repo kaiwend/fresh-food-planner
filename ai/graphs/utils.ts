@@ -1,23 +1,19 @@
 import { z, ZodTypeAny } from "zod";
 import { ChatOpenAI } from "langchain/openai";
+import { ModelOptions } from "@/types/llm.ts";
 
 export const llmWithStructuredOutput = <
   T extends z.ZodObject<Record<string, ZodTypeAny>>,
 >(
   structuredOutput: T,
   functionName: string,
+  modelOptions?: ModelOptions,
 ) =>
-  llm().withStructuredOutput<T>(structuredOutput, {
+  llm(modelOptions).withStructuredOutput<T>(structuredOutput, {
     name: functionName,
   });
 
-export const llm = (options?: {
-  temperature?: number;
-  model?: string;
-  quality?: number;
-  latency?: number;
-  costs?: number;
-}) =>
+export const llm = (options?: ModelOptions) =>
   new ChatOpenAI({
     temperature: options?.temperature ?? 0.5,
     model: "router",

@@ -25,7 +25,9 @@ Existing information to merge with:
 \`\`\`
 `;
 const prompt: Runnable = PromptTemplate.fromTemplate(template);
-const model = llmWithStructuredOutput(dietSchema, "ExtractDietInfo");
+const model = llmWithStructuredOutput(dietSchema, "ExtractDietInfo", {
+  latency: 4.0,
+});
 
 export const extractDietDataChain = RunnableSequence.from<
   ExtractDietDataChainInput,

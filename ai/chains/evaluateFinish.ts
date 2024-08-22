@@ -5,9 +5,8 @@ import { dietSchema } from "@/types/diet.ts";
 import { z } from "zod";
 
 type EvaluateFinishInput = {
-  input: string;
   lastQuestion: string;
-  agentScratchpad: string;
+  missingQuestions: string;
 };
 
 type EvaluateFinishOutput = {
@@ -19,24 +18,33 @@ const evaluateFinishSchema = z.object({
   onboardingComplete: z
     .boolean()
     .default(false)
-    .describe("Indicates whether all questions were asked"),
-  agentScratchpad: z.string().describe("Question that was asked"),
+    .describe("Is true when there are no missing questions left"),
+
+  agentScratchpad: z.optional(
+    z
+      .string()
+      .describe(
+        `Classify the question that was asked to one of the following: ${Object.keys(
+          dietSchema.shape,
+        ).join(", ")}. And ONLY one of them.`,
+      ),
+  ),
 });
 
 const template = `
-You are assisting a diet planner and receive the last question that was asked and the last response from the user. Your goal is to note down the question that was asked on the agentScratchpad. Also decide if the onboarding is complete. Onboarding is complete, once there was a question asked for each of the following: ${Object.keys(
-  dietSchema,
-).join(", ")}
+You are an onboarding professional that is onboarding a user to a diet planner app. Your goal is to determine if all questions were asked. If all questions were asked, the onboarding is finished.
 
 Last question asked:
 \`\`\`{lastQuestion}\`\`\
-Last response:
-\`\`\`{input}\`\`\`
-Already asked questions:
-\`\`\`{agentScratchpad}\`\`\`
+
+Questions missing:
+\`\`\`{missingQuestions}\`\`\`
 `;
 const prompt: Runnable = PromptTemplate.fromTemplate(template);
-const model = llmWithStructuredOutput(evaluateFinishSchema, "EvaluateFinish");
+const model = llmWithStructuredOutput(evaluateFinishSchema, "EvaluateFinish", {
+  temperature: 0.0,
+  latency: 4.0,
+});
 
 export const evaluateFinishChain = RunnableSequence.from<
   EvaluateFinishInput,

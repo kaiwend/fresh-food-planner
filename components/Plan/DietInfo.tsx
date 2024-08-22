@@ -20,11 +20,6 @@ const InfoBlocks = (props: { diet: Diet }) => (
     <SingleInfoBlock title="Preferences" value={props.diet.preferences} />
     <SingleInfoBlock title="Dislikes" value={props.diet.dislikes} />
     <SingleInfoBlock title="Allergies" value={props.diet.allergies} />
-    <SingleInfoBlock title="Goal" value={props.diet.goal} />
-    <SingleInfoBlock
-      title="Eating Schedule"
-      value={props.diet.eatingSchedule}
-    />
   </div>
 );
 

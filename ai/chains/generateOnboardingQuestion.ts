@@ -35,7 +35,7 @@ ${behaviourInstructions.map((instruction) => `${instruction}`).join("\n")}
   ["user", "{input}"],
 ]);
 
-const model = llm();
+const model = llm({ temperature: 0.7, latency: 1.5, quality: 2.0 });
 export const generateOnboardingQuestionChain = RunnableSequence.from<
   Pick<OnboardingAgentState, "input" | "chatHistory"> & { dietInfo: string },
   OnboardingAgentState["lastQuestion"]

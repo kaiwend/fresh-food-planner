@@ -43,7 +43,7 @@ export interface OnboardingAgentState {
   onboardingComplete: boolean;
   chatHistory: string[];
   lastQuestion: string;
-  agentScratchpad: string;
+  agentScratchpad: string[];
 }
 
 const graphState: StateGraphArgs<OnboardingAgentState>["channels"] = {
@@ -62,8 +62,9 @@ const graphState: StateGraphArgs<OnboardingAgentState>["channels"] = {
     }),
   },
   agentScratchpad: {
-    value: (oldScratchpad: string, newScratchpad: string) =>
-      `${oldScratchpad} ${newScratchpad}`,
+    value: (oldScratchpad: string[], newScratchpad: string[]) =>
+      Array.from(new Set([...oldScratchpad, ...newScratchpad])),
+    default: () => [],
   },
 };
 
