@@ -1,4 +1,4 @@
-import { Diet } from "../../graphs/main/mainGraph.ts";
+import { Diet } from "@/types/diet.ts";
 import DietInfo from "./DietInfo.tsx";
 
 const Plan = (props: { diet: Diet }) => (

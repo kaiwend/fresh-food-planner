@@ -1,22 +1,21 @@
-import { AgentState } from "@/ai/graphs/main/mainGraph.ts";
 import { transformObjectForPrompt } from "@/ai/graphs/utils.ts";
 import { extractDietDataChain } from "@/ai/chains/extractDietData.ts";
-import { evaluateFinishChain } from "@/ai/chains/evaluateFinishCHain.ts";
+import { evaluateFinishChain } from "@/ai/chains/evaluateFinish.ts";
+import { OnboardingAgentState } from "@/ai/graphs/onboarding/graph.ts";
 
-export const INITIAL_EXTRACTION_NODE_NAME = "initialDietDataExtraction";
 export const EXTRACT_DIET_DATA_NODE_NAME = "extractDietData";
 
-export const extractDietData = async (state: AgentState) => {
+export const extractDietData = async (state: OnboardingAgentState) => {
   const extractedDiet = await extractDietDataChain.invoke({
     input: state.input,
-    lastResponse: state.lastResponse,
+    lastQuestion: state.lastQuestion,
     dietInfo: transformObjectForPrompt(state.diet),
   });
 
   const { onboardingComplete, agentScratchpad } =
     await evaluateFinishChain.invoke({
       input: state.input,
-      lastResponse: state.lastResponse,
+      lastQuestion: state.lastQuestion,
       agentScratchpad: state.agentScratchpad,
     });
 

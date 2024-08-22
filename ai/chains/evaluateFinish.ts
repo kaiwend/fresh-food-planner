@@ -6,7 +6,7 @@ import { z } from "zod";
 
 type EvaluateFinishInput = {
   input: string;
-  lastResponse: string;
+  lastQuestion: string;
   agentScratchpad: string;
 };
 
@@ -29,17 +29,11 @@ You are assisting a diet planner and receive the last question that was asked an
 ).join(", ")}
 
 Last question asked:
-\`\`\`
-{lastResponse}
-\`\`\
+\`\`\`{lastQuestion}\`\`\
 Last response:
-\`\`\`
-{input}
-\`\`\`
+\`\`\`{input}\`\`\`
 Already asked questions:
-\`\`\`
-{agentScratchpad}
-\`\`\`
+\`\`\`{agentScratchpad}\`\`\`
 `;
 const prompt: Runnable = PromptTemplate.fromTemplate(template);
 const model = llmWithStructuredOutput(evaluateFinishSchema, "EvaluateFinish");

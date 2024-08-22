@@ -1,8 +1,8 @@
-import { mainGraph } from "../graphs/main/mainGraph.ts";
+import { onboardingGraph } from "@/ai/graphs/onboarding/graph.ts";
 
 console.log("generating graph image");
 
-const drawableGraph = mainGraph.getGraph();
+const drawableGraph = onboardingGraph.getGraph();
 const image = await drawableGraph.drawMermaidPng();
 const arrayBuffer = await image.arrayBuffer();
 const png = new Uint8Array(arrayBuffer);

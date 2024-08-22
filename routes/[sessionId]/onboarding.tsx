@@ -2,8 +2,8 @@ import { Handlers, PageProps } from "$fresh/server.ts";
 import { Partial } from "$fresh/runtime.ts";
 import { ChatForm } from "../../islands/ChatForm.tsx";
 import { useSignal } from "@preact/signals";
-import { ASK_HUMAN_ONBOARDING_NODE } from "../../graphs/main/nodes/askHuman/askHumanOnboarding.ts";
-import { mainGraph } from "../../graphs/main/mainGraph.ts";
+import { onboardingGraph } from "@/ai/graphs/onboarding/graph.ts";
+import { ASK_HUMAN_ONBOARDING_NODE } from "@/ai/graphs/onboarding/nodes/askHuman/askHumanOnboarding.ts";
 
 interface Data {
   threadId: string;
@@ -43,16 +43,16 @@ export const handler: Handlers<Data> = {
       },
     };
 
-    const graphState = await mainGraph.getState(graphConfig);
+    const graphState = await onboardingGraph.getState(graphConfig);
     const chatHistory = oldMessages.filter((message) => message !== LOADING);
     let result;
     if (!graphState.createdAt) {
-      result = await mainGraph.invoke(
+      result = await onboardingGraph.invoke(
         { input: newMessage, chatHistory },
         graphConfig,
       );
     } else {
-      await mainGraph.updateState(
+      await onboardingGraph.updateState(
         graphConfig,
         {
           input: newMessage,
@@ -60,7 +60,7 @@ export const handler: Handlers<Data> = {
         },
         ASK_HUMAN_ONBOARDING_NODE,
       );
-      result = await mainGraph.invoke(null, graphConfig);
+      result = await onboardingGraph.invoke(null, graphConfig);
     }
 
     if (!newMessage || typeof newMessage !== "string") {
@@ -69,7 +69,7 @@ export const handler: Handlers<Data> = {
 
     const messages = [
       ...oldMessages.filter((message) => message !== LOADING),
-      result.lastResponse,
+      result.lastQuestion,
     ];
 
     if (result.onboardingComplete) {

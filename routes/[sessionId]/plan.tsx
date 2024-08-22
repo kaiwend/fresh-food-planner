@@ -1,6 +1,6 @@
 import { Handlers, PageProps } from "$fresh/server.ts";
 import Plan from "../../components/Plan/index.tsx";
-import { Diet } from "../../graphs/main/mainGraph.ts";
+import { Diet } from "@/types/diet.ts";
 
 interface Data {
   diet: Diet;

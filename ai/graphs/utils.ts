@@ -1,6 +1,5 @@
 import { z, ZodTypeAny } from "zod";
 import { ChatOpenAI } from "langchain/openai";
-import { BaseCheckpointSaver } from "langchain/langgraph";
 
 export const llmWithStructuredOutput = <
   T extends z.ZodObject<Record<string, ZodTypeAny>>,

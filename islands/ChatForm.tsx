@@ -1,11 +1,11 @@
 import { Signal } from "https://esm.sh/v135/@preact/signals-core@1.5.1/dist/signals-core.js";
-import { transformObjectForPrompt } from "../graphs/utils.ts";
-import { AgentState } from "../graphs/main/mainGraph.ts";
+import { transformObjectForPrompt } from "@/ai/graphs/utils.ts";
+import { OnboardingAgentState } from "@/ai/graphs/onboarding/graph.ts";
 
 interface ChatFormProps {
   threadId: string;
   sessionId: string;
-  currentState: AgentState;
+  currentState: OnboardingAgentState;
   messages: Signal<string[]>;
   currentInput: Signal<string>;
   isLoading: Signal<boolean>;

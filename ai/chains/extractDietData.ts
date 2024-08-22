@@ -5,7 +5,7 @@ import { dietSchema, type Diet } from "@/types/diet.ts";
 
 type ExtractDietDataChainInput = {
   input: string;
-  lastResponse: string;
+  lastQuestion: string;
   dietInfo: string;
 };
 
@@ -17,7 +17,7 @@ Extract the diet information from the human response:
 \`\`\`{input}\`\`\`
 
 For context, the last question asked was:
-\`\`\`{lastResponse}\`\`\`
+\`\`\`{lastQuestion}\`\`\`
 
 Existing information to merge with:
 \`\`\`
