@@ -35,10 +35,12 @@ export const extractDietData = async (state: OnboardingAgentState) => {
     diet: extractedDiet,
     onboardingComplete,
     // sometimes agenstScratchpad contains multiple items, we just want one
-    agentScratchpad: [
-      agentScratchpad.includes(",")
-        ? agentScratchpad.split(",")[0]
-        : agentScratchpad,
-    ],
+    agentScratchpad: agentScratchpad
+      ? [
+          agentScratchpad.includes(",")
+            ? agentScratchpad.split(",")[0]
+            : agentScratchpad,
+        ]
+      : [],
   };
 };

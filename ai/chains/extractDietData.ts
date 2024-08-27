@@ -13,21 +13,19 @@ const template = `You are an onboarding professional that is onboarding a user t
 
 You will receive the last pair of a chat history. Your goal is to extract information from those extracted information, merge that extracted information with some existing information. Preserve as much detail and refrain from losing any information at all cost.
 
-Extract the diet information from the human response:
-\`\`\`{input}\`\`\`
-
 For context, the last question asked was:
 \`\`\`{lastQuestion}\`\`\`
 
-Existing information to merge with:
+Extract the diet information from the human response:
+\`\`\`{input}\`\`\`
+
+And merge the outcome with the existing diet information:
 \`\`\`
 {dietInfo}
 \`\`\`
 `;
 const prompt: Runnable = PromptTemplate.fromTemplate(template);
-const model = llmWithStructuredOutput(dietSchema, "ExtractDietInfo", {
-  latency: 2.0,
-});
+const model = llmWithStructuredOutput(dietSchema, "ExtractDietInfo");
 
 export const extractDietDataChain = RunnableSequence.from<
   ExtractDietDataChainInput,
