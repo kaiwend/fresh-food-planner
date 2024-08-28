@@ -9,7 +9,7 @@ export type ScheduleEntry = {
   keyName: string;
   date: string;
   type: ScheduleType;
-  recipe: MetaRecipe;
+  edamamRecipe: MetaRecipe;
 };
 
 export type Schedule = ScheduleEntry[];

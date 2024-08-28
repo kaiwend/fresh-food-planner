@@ -83,6 +83,7 @@ export const handler: Handlers<Data> = {
       .join(",");
     const result = await EdamamRecipe.searchRecipe(preferences);
     const recipes = result.hits;
+    console.log({ recipes });
 
     const RecipeSaverService = new RecipeSaver(sessionId);
     await RecipeSaverService.setup();

@@ -26,7 +26,12 @@ export class RecipeSaver {
 
     await this.denoKV.set([this.sessionId, this.scheduleName, keyName], recipe);
 
-    return { keyName, date: date.toISOString(), type: scheduleType, recipe };
+    return {
+      keyName,
+      date: date.toISOString(),
+      type: scheduleType,
+      edamamRecipe: recipe,
+    };
   }
   public async retrieveRecipe(
     date: Date,
@@ -52,7 +57,7 @@ export class RecipeSaver {
         keyName,
         type: scheduleType,
         date: date.toISOString(),
-        recipe,
+        edamamRecipe: recipe,
       };
     } catch (e) {
       console.error("error: ", e);

@@ -8,14 +8,15 @@ const EatingScheduleSelection = (props: { sessionId: string }) => {
   const scheduleItems = relevantDates();
 
   return (
-    <Card title="Schedule">
+    <Card>
       <form
         id="generate-plan"
         onSubmit={() => {
           console.log("Generating plan");
         }}
-        className="flex flex-col gap-5 mx-4"
+        className="card-body flex flex-col gap-5"
       >
+        <div className="card-title">Schedule</div>
         <div className="flex gap-3 justify-center">
           <div className="flex flex-col gap-3">
             <div className="h-5"></div>

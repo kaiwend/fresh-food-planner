@@ -11,7 +11,7 @@ type ExtractDietDataChainInput = {
 
 const template = `You are an onboarding professional that is onboarding a user to a diet planner app.
 
-You will receive the last pair of a chat history. Your goal is to extract information from those extracted information, merge that extracted information with some existing information. Preserve as much detail and refrain from losing any information at all cost.
+You will receive the last pair of a chat history. Your goal is to extract information from those extracted information, merge that extracted information with some existing information. Preserve as much detail and refrain from losing any information at all cost. Feel free to correct spelling and transform them to singular instead of plural.
 
 For context, the last question asked was:
 \`\`\`{lastQuestion}\`\`\`

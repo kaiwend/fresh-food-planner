@@ -12,7 +12,7 @@ interface Props {
 
 const Plan = (props: Props) => (
   <div className="p-10 flex flex-col gap-5">
-    <div className="gap-5 flex">
+    <div className="gap-5 flex mx-auto">
       <DietInfo diet={props.diet} />
       <EatingScheduleSelection sessionId={props.sessionId} />
     </div>

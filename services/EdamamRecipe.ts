@@ -21,7 +21,6 @@ export class EdamamRecipe {
 
     const url = `${this.baseUrl}?${requiredParams}&q=${queryParams}`;
 
-    // "https://api.edamam.com/search?app_id=900da95e&app_key=40698503668e0bb3897581f4766d77f9&q=avocado&health=tree-nut-free&health=vegetarian",
     const result = await fetch(encodeURI(url));
     return await result.json();
   }
