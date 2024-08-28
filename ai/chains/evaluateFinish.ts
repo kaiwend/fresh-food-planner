@@ -17,7 +17,6 @@ type EvaluateFinishOutput = {
 const evaluateFinishSchema = z.object({
   onboardingComplete: z
     .boolean()
-    .default(false)
     .describe("Is true when there are no missing questions left"),
 
   agentScratchpad: z.optional(
@@ -43,7 +42,6 @@ Questions missing:
 const prompt: Runnable = PromptTemplate.fromTemplate(template);
 const model = llmWithStructuredOutput(evaluateFinishSchema, "EvaluateFinish", {
   temperature: 0.0,
-  latency: 4.0,
 });
 
 export const evaluateFinishChain = RunnableSequence.from<

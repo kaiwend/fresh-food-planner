@@ -48,8 +48,6 @@ enum Health {
   wheatFree = "wheat-free",
 }
 
-//   American, Asian, British, Caribbean, Central Europe, Chinese, Eastern Europe, French, Indian, Italian, Japanese, Kosher, Mediterranean, Mexican, Middle Eastern, Nordic, South American, South East Asian
-
 enum Cuisine {
   american = "American",
   asian = "Asian",
@@ -72,17 +70,22 @@ enum Cuisine {
 }
 
 export const dietSchema = z.object({
-  focus: z.optional(z.array(z.nativeEnum(Focus))),
-  health: z.optional(z.array(z.nativeEnum(Health))),
-  cuisineType: z.optional(z.array(z.nativeEnum(Cuisine))),
-  // old
-  allergies: z.optional(z.array(z.string())),
-  dislikes: z.optional(z.array(z.string())),
-  preferences: z
-    .optional(z.array(z.string()))
-    .describe(
-      "Preferred ingredients, cuisine type or meals, should contain at least 5 items",
-    ),
+  focus: z.optional(
+    z.array(z.nativeEnum(Focus)).describe("Focus goals of the user"),
+  ),
+  health: z.optional(
+    z.array(z.nativeEnum(Health)).describe("Health goals of the user"),
+  ),
+  cuisineType: z.optional(
+    z.array(z.nativeEnum(Cuisine)).describe("Types of cuisine the user likes"),
+  ),
+  allergies: z.optional(
+    z
+      .array(z.string())
+      .describe("User allergies against what should be excluded"),
+  ),
+  dislikes: z.optional(z.array(z.string()).describe("Not liked ingredients")),
+  preferences: z.optional(z.array(z.string()).describe("Prefered ingredients")),
 });
 
 export type Diet = z.infer<typeof dietSchema>;

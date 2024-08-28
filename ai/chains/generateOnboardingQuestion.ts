@@ -29,15 +29,21 @@ ${behaviourInstructions.map((instruction) => `${instruction}`).join("\n")}
 
 # diet_info:
 {dietInfo}
+
+# missing questions:
+{missingQuestions}
 `,
   ],
   new MessagesPlaceholder("chatHistory"),
   ["user", "{input}"],
 ]);
 
-const model = llm({ temperature: 0.7, latency: 1.5, quality: 2.0 });
+const model = llm({ temperature: 0.75 });
 export const generateOnboardingQuestionChain = RunnableSequence.from<
-  Pick<OnboardingAgentState, "input" | "chatHistory"> & { dietInfo: string },
+  Pick<OnboardingAgentState, "input" | "chatHistory"> & {
+    dietInfo: string;
+    missingQuestions: string;
+  },
   OnboardingAgentState["lastQuestion"]
 >(
   [promptTemplate, model, new StringOutputParser()],

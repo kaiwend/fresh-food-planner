@@ -1,4 +1,4 @@
-import { MetaRecipe } from "@/types/recipe.ts";
+import { MetaRecipe, Recipe } from "@/types/recipe.ts";
 
 export interface EdamamSearchResult {
   from: number;
@@ -7,6 +7,29 @@ export interface EdamamSearchResult {
   _links: Pages;
   hits: MetaRecipe[];
 }
+
+type RelevantRecipeKeys =
+  | "label"
+  | "ingredientLines"
+  | "url"
+  | "source"
+  | "calories"
+  | "yield"
+  | "totalTime"
+  | "totalNutrients"
+  | "co2EmissionsClass"
+  | "totalCO2Emissions";
+
+type NarrowedRecipe = Pick<Recipe, RelevantRecipeKeys>;
+
+export type NarrowedMetaRecipe = { recipe: NarrowedMetaRecipe };
+
+export type EdamamSearchResultV2 = Pick<
+  EdamamSearchResult,
+  "from" | "to" | "count" | "_links"
+> & {
+  hits: NarrowedRecipe[];
+};
 
 interface Pages {
   next: NextPage;

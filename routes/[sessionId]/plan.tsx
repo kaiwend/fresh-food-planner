@@ -57,6 +57,7 @@ export const handler: Handlers<Data> = {
         }
       }
     }
+    console.log({ schedule });
 
     return ctx.render({
       diet: diet.value as Diet,
@@ -70,6 +71,7 @@ export const handler: Handlers<Data> = {
     const sessionId = ctx.params.sessionId;
     const kv = await Deno.openKv();
     const diet = (await kv.get([sessionId, "diet"])).value;
+    console.log({ diet });
 
     if (!isDietPresent(diet)) {
       throw new Error("Diet not found");
@@ -78,10 +80,10 @@ export const handler: Handlers<Data> = {
       throw new Error("No preferences found");
     }
 
-    const preferences = diet.preferences
-      .filter((entry) => entry === "avocado" || entry === "tomatoes")
-      .join(",");
-    const result = await EdamamRecipe.searchRecipe(preferences);
+    const preferences = diet.preferences.join(",");
+    console.log({ preferences });
+    const result = await EdamamRecipe.searchRecipeV2(preferences);
+    console.log({ result });
     const recipes = result.hits;
     console.log({ recipes });
 
