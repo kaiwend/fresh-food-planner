@@ -35,7 +35,10 @@
     "zod": "https://esm.sh/zod@3.23.8",
     "@/types/": "./types/",
     "@/ai/": "./ai/",
-    "@/components/": "./components/"
+    "@/components/": "./components/",
+    "typography": "npm:@tailwindcss/typography",
+    "daisyui": "npm:daisyui@4.4.19",
+    "deno.importMap": "./import_map.json"
   },
   "compilerOptions": {
     "jsx": "react-jsx",
