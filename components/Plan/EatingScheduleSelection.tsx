@@ -1,5 +1,4 @@
 import Card from "@/components/Card.tsx";
-import { addDays } from "https://unpkg.com/date-fns@3.6.0/addDays.mjs";
 import { format } from "https://unpkg.com/date-fns@3.6.0/format.mjs";
 import { relevantDates } from "../../routes/[sessionId]/plan.tsx";
 
@@ -17,6 +16,9 @@ const EatingScheduleSelection = (props: { sessionId: string }) => {
         className="card-body flex flex-col gap-5"
       >
         <div className="card-title">Schedule</div>
+        <div className="w-full">
+          <input placeholder="Ingredients at home..." className="w-full" />
+        </div>
         <div className="flex gap-3 justify-center">
           <div className="flex flex-col gap-3">
             <div className="h-5"></div>
