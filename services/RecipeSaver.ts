@@ -1,5 +1,6 @@
 import { ScheduleEntry, ScheduleType } from "@/types/schedule.ts";
 import { MetaRecipe } from "@/types/recipe.ts";
+import { NarrowedMetaRecipe } from "@/types/edamam.ts";
 
 export class RecipeSaver {
   private sessionId: string;
@@ -20,7 +21,7 @@ export class RecipeSaver {
   public async saveRecipe(
     date: Date,
     scheduleType: ScheduleType,
-    recipe: MetaRecipe,
+    recipe: NarrowedMetaRecipe,
   ): Promise<ScheduleEntry> {
     const keyName = this.getRecipeKey(date, scheduleType);
 

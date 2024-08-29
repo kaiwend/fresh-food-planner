@@ -23,7 +23,7 @@ export const relevantRecipeKeys = [
 
 type RelevantRecipeKeys = (typeof relevantRecipeKeys)[number];
 
-type NarrowedRecipe = Pick<Recipe, RelevantRecipeKeys>;
+// type NarrowedRecipe = Pick<Recipe, RelevantRecipeKeys>;
 
 export type NarrowedMetaRecipe = { recipe: NarrowedMetaRecipe };
 
@@ -31,7 +31,7 @@ export type EdamamSearchResultV2 = Pick<
   EdamamSearchResult,
   "from" | "to" | "count" | "_links"
 > & {
-  hits: NarrowedRecipe[];
+  hits: NarrowedMetaRecipe[];
 };
 
 interface Pages {

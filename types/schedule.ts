@@ -1,4 +1,4 @@
-import { MetaRecipe } from "@/types/recipe.ts";
+import { NarrowedMetaRecipe } from "@/types/edamam.ts";
 
 export enum ScheduleType {
   dinner = "dinner",
@@ -9,7 +9,7 @@ export type ScheduleEntry = {
   keyName: string;
   date: string;
   type: ScheduleType;
-  edamamRecipe: MetaRecipe;
+  edamamRecipe: NarrowedMetaRecipe;
 };
 
 export type Schedule = ScheduleEntry[];

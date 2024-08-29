@@ -57,7 +57,6 @@ export const handler: Handlers<Data> = {
         }
       }
     }
-    console.log({ schedule });
 
     return ctx.render({
       diet: diet.value as Diet,
@@ -81,11 +80,8 @@ export const handler: Handlers<Data> = {
     }
 
     const preferences = diet.preferences.join(",");
-    console.log({ preferences });
     const result = await EdamamRecipe.searchRecipeV2(preferences);
-    console.log({ result });
     const recipes = result.hits;
-    console.log({ recipes });
 
     const RecipeSaverService = new RecipeSaver(sessionId);
     await RecipeSaverService.setup();
