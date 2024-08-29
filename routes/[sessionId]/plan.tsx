@@ -80,7 +80,7 @@ export const handler: Handlers<Data> = {
     }
 
     const preferences = diet.preferences.join(",");
-    const result = await EdamamRecipe.searchRecipeV2(preferences);
+    const result = await EdamamRecipe.searchRecipeV2({ query: preferences });
     const recipes = result.hits;
 
     const RecipeSaverService = new RecipeSaver(sessionId);

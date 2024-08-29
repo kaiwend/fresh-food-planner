@@ -12,10 +12,10 @@ type QueryParam = {
 
 type SearchInput = {
   query: string;
-  excludeIngredients: string[];
-  mealTypes: mealType[];
-  dishTypes: dishType[];
-  timeMin: number;
+  excludeIngredients?: string[];
+  mealTypes?: mealType[];
+  dishTypes?: dishType[];
+  timeMin?: number;
   timeMax?: number;
 };
 
