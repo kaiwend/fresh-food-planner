@@ -31,7 +31,7 @@ const evaluateFinishSchema = z.object({
 });
 
 const template = `
-You are an onboarding professional that is onboarding a user to a diet planner app. Your goal is to determine if all questions were asked. If all questions were asked, the onboarding is finished.
+You are an onboarding professional that is onboarding a user to a diet planner app. Your goal is to determine if all questions were asked. If all questions were asked or the last question does not contain a question, the onboarding is finished.
 
 Last question asked:
 \`\`\`{lastQuestion}\`\`\

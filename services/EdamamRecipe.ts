@@ -1,4 +1,8 @@
-import { EdamamSearchResult } from "@/types/edamam.ts";
+import {
+  EdamamSearchResult,
+  EdamamSearchResultV2,
+  relevantRecipeKeys,
+} from "@/types/edamam.ts";
 
 export class EdamamRecipe {
   private static baseUrl = "https://api.edamam.com/api/recipes/v2";
@@ -14,10 +18,21 @@ export class EdamamRecipe {
     return await result.json();
   }
 
-  static async searchRecipeV2(query: string): Promise<EdamamSearchResult> {
+  static async searchRecipeV2(query: string): Promise<EdamamSearchResultV2> {
+    // input later on
     const queryParams = query;
+    const mealTypes = ["lunch", "dinner"];
+    const excluded = ["mango"];
 
-    const url = `${this.baseUrl}?${this.requiredParams()}&q=${queryParams}`;
+    const url = `${
+      this.baseUrl
+    }?${this.requiredParams()}&q=${queryParams}&${relevantRecipeKeys
+      .map((field) => `field=${field}`)
+      .join("&")}&${mealTypes
+      .map((mealType) => `mealType=${mealType}`)
+      .join("&")}&${excluded.map(
+      (excludedItem) => `excluded=${excludedItem}`,
+    )}&random=true`;
 
     const result = await fetch(encodeURI(url));
     return await result.json();

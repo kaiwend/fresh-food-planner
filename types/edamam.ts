@@ -8,17 +8,20 @@ export interface EdamamSearchResult {
   hits: MetaRecipe[];
 }
 
-type RelevantRecipeKeys =
-  | "label"
-  | "ingredientLines"
-  | "url"
-  | "source"
-  | "calories"
-  | "yield"
-  | "totalTime"
-  | "totalNutrients"
-  | "co2EmissionsClass"
-  | "totalCO2Emissions";
+export const relevantRecipeKeys = [
+  "label",
+  "ingredientLines",
+  "url",
+  "source",
+  "calories",
+  "yield",
+  "totalTime",
+  "totalNutrients",
+  "co2EmissionsClass",
+  "totalCO2Emissions",
+] as const;
+
+type RelevantRecipeKeys = (typeof relevantRecipeKeys)[number];
 
 type NarrowedRecipe = Pick<Recipe, RelevantRecipeKeys>;
 
