@@ -8,13 +8,7 @@ const EatingScheduleSelection = (props: { sessionId: string }) => {
 
   return (
     <Card>
-      <form
-        id="generate-plan"
-        onSubmit={() => {
-          console.log("Generating plan");
-        }}
-        className="card-body flex flex-col gap-5"
-      >
+      <form id="generate-plan" className="card-body flex flex-col gap-5">
         <div className="card-title">Schedule</div>
         <div className="w-full">
           <input placeholder="Ingredients at home..." className="w-full" />
