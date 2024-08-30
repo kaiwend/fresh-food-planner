@@ -16,16 +16,6 @@ import {
   extractDietData,
 } from "@/ai/graphs/onboarding/nodes/extractDietData.ts";
 
-export enum Intent {
-  CHANGE_DIET = "change diet",
-  RESEARCH_MEALS = "research meals",
-  GATHER_INFO = "gather info",
-  GENERATE_MEAL_PLAN = "generate meal plan",
-}
-
-export const zodIntent = z.nativeEnum(Intent);
-type ZodIntent = z.infer<typeof zodIntent>;
-
 export const onboardingSchema = z.object({
   onboardingComplete: z
     .boolean()
@@ -38,7 +28,6 @@ export type OnboardingSchema = z.infer<typeof onboardingSchema>;
 
 export interface OnboardingAgentState {
   input: string;
-  intent: ZodIntent;
   diet: Diet;
   onboardingComplete: boolean;
   chatHistory: string[];
@@ -48,7 +37,6 @@ export interface OnboardingAgentState {
 
 const graphState: StateGraphArgs<OnboardingAgentState>["channels"] = {
   input: null,
-  intent: null,
   chatHistory: null,
   lastQuestion: null,
   onboardingComplete: null,
