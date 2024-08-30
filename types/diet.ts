@@ -1,6 +1,66 @@
 import { z } from "zod";
 
-enum Focus {
+export const dietSchema = z.object({
+  // focus: z.optional(
+  //   z.array(z.nativeEnum(Focus)).describe("Focus goals of the user"),
+  // ),
+  // health: z.optional(
+  //   z.array(z.nativeEnum(Health)).describe("Health goals of the user"),
+  // ),
+  // cuisineType: z.optional(
+  //   z.array(z.nativeEnum(Cuisine)).describe("Types of cuisine the user likes"),
+  // ),
+  allergies: z.optional(
+    z
+      .array(z.string())
+      .describe(
+        "Allergies or intollerances against ingredients that should be excluded",
+      ),
+  ),
+  dislikes: z.optional(
+    z
+      .array(z.string())
+      .describe("Personal dispreferences for ingredients of the user"),
+  ),
+  preferences: z.optional(
+    z
+      .array(z.string())
+      .describe(
+        "Prefered ingredients, cuisine type, diet type etc. Basically everything the user likes",
+      ),
+  ),
+});
+
+export type Diet = z.infer<typeof dietSchema>;
+
+export enum mealType {
+  breakfast = "Breakfast",
+  dinner = "Dinner",
+  lunch = "Lunch",
+  snack = "Snack",
+  teatime = "Teatime",
+}
+
+export enum dishType {
+  biscuitsAndCookies = "Biscuits and cookies",
+  bread = "Bread",
+  cereals = "Cereals",
+  condimentsAndSauces = "Condiments and sauces",
+  desserts = "Desserts",
+  drinks = "Drinks",
+  mainCourse = "Main course",
+  pancake = "Pancake",
+  preps = "Preps",
+  preserve = "Preserve",
+  salad = "Salad",
+  sandwiches = "Sandwiches",
+  sideDish = "Side dish",
+  soup = "Soup",
+  starter = "Starter",
+  sweets = "Sweets",
+}
+
+export enum Focus {
   balanced = "balanced",
   highFiber = "high-fiber",
   highProtein = "high-protein",
@@ -9,7 +69,7 @@ enum Focus {
   lowSodium = "low-sodium",
 }
 
-enum Health {
+export enum Health {
   alcoholCocktail = "alcohol-cocktail",
   alcoholFree = "alcohol-free",
   celeryFree = "celery-free",
@@ -48,7 +108,7 @@ enum Health {
   wheatFree = "wheat-free",
 }
 
-enum Cuisine {
+export enum Cuisine {
   american = "American",
   asian = "Asian",
   british = "British",
@@ -67,52 +127,4 @@ enum Cuisine {
   nordic = "Nordic",
   southAmerican = "South American",
   southEastAsian = "South East Asian",
-}
-
-export const dietSchema = z.object({
-  focus: z.optional(
-    z.array(z.nativeEnum(Focus)).describe("Focus goals of the user"),
-  ),
-  health: z.optional(
-    z.array(z.nativeEnum(Health)).describe("Health goals of the user"),
-  ),
-  cuisineType: z.optional(
-    z.array(z.nativeEnum(Cuisine)).describe("Types of cuisine the user likes"),
-  ),
-  allergies: z.optional(
-    z
-      .array(z.string())
-      .describe("User allergies against what should be excluded"),
-  ),
-  dislikes: z.optional(z.array(z.string()).describe("Not liked ingredients")),
-  preferences: z.optional(z.array(z.string()).describe("Prefered ingredients")),
-});
-
-export type Diet = z.infer<typeof dietSchema>;
-
-export enum mealType {
-  breakfast = "Breakfast",
-  dinner = "Dinner",
-  lunch = "Lunch",
-  snack = "Snack",
-  teatime = "Teatime",
-}
-
-export enum dishType {
-  biscuitsAndCookies = "Biscuits and cookies",
-  bread = "Bread",
-  cereals = "Cereals",
-  condimentsAndSauces = "Condiments and sauces",
-  desserts = "Desserts",
-  drinks = "Drinks",
-  mainCourse = "Main course",
-  pancake = "Pancake",
-  preps = "Preps",
-  preserve = "Preserve",
-  salad = "Salad",
-  sandwiches = "Sandwiches",
-  sideDish = "Side dish",
-  soup = "Soup",
-  starter = "Starter",
-  sweets = "Sweets",
 }

@@ -7,16 +7,7 @@ import { dishType, mealType } from "@/types/diet.ts";
 
 type QueryParam = {
   name: string;
-  value: string | string[];
-};
-
-type SearchInput = {
-  query: string;
-  excludeIngredients?: string[];
-  mealTypes?: mealType[];
-  dishTypes?: dishType[];
-  timeMin?: number;
-  timeMax?: number;
+  value: string | readonly string[];
 };
 
 // Put this into a config later

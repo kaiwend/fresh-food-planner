@@ -1,6 +1,7 @@
 import { MetaRecipe, Recipe } from "@/types/recipe.ts";
+import { dishType, mealType } from "@/types/diet.ts";
 
-export interface EdamamSearchResult {
+interface EdamamSearchResult {
   from: number;
   to: number;
   count: number;
@@ -23,9 +24,9 @@ export const relevantRecipeKeys = [
 
 type RelevantRecipeKeys = (typeof relevantRecipeKeys)[number];
 
-// type NarrowedRecipe = Pick<Recipe, RelevantRecipeKeys>;
+type NarrowedRecipe = Pick<Recipe, RelevantRecipeKeys>;
 
-export type NarrowedMetaRecipe = { recipe: NarrowedMetaRecipe };
+export type NarrowedMetaRecipe = { recipe: NarrowedRecipe };
 
 export type EdamamSearchResultV2 = Pick<
   EdamamSearchResult,
@@ -42,3 +43,12 @@ interface NextPage {
   href: string;
   title: string;
 }
+
+export type EdamamSearchInput = {
+  query: string;
+  excludeIngredients?: string[];
+  mealTypes?: mealType[];
+  dishTypes?: dishType[];
+  timeMin?: number;
+  timeMax?: number;
+};
