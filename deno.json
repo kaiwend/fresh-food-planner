@@ -36,6 +36,7 @@
     "@/types/": "./types/",
     "@/ai/": "./ai/",
     "@/components/": "./components/",
+    "@/services/": "./services/",
     "typography": "npm:@tailwindcss/typography",
     "daisyui": "npm:daisyui@4.4.19",
     "deno.importMap": "./import_map.json"

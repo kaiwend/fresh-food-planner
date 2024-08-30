@@ -4,6 +4,7 @@ import { ChatForm } from "../../islands/ChatForm.tsx";
 import { useSignal } from "@preact/signals";
 import { onboardingGraph } from "@/ai/graphs/onboarding/graph.ts";
 import { ASK_HUMAN_ONBOARDING_NODE } from "@/ai/graphs/onboarding/nodes/askHuman/askHumanOnboarding.ts";
+import { DietService } from "@/services/DietSaver.ts";
 
 interface Data {
   threadId: string;
@@ -48,7 +49,7 @@ export const handler: Handlers<Data> = {
     let result;
     if (!graphState.createdAt) {
       result = await onboardingGraph.invoke(
-        { input: newMessage, chatHistory },
+        { input: newMessage, lastQuestion: chatHistory.pop(), chatHistory },
         graphConfig,
       );
     } else {
@@ -73,10 +74,8 @@ export const handler: Handlers<Data> = {
     ];
 
     if (result.onboardingComplete) {
-      const kv = await Deno.openKv();
-      await kv.set([sessionId, "diet"], result.diet);
-
-      console.log("DONE");
+      const dietService = new DietService(sessionId);
+      await dietService.save(result.diet);
 
       const headers = new Headers();
       headers.set("location", `/${sessionId}/plan`);

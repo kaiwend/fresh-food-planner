@@ -25,10 +25,7 @@ And merge the outcome with the existing diet information:
 \`\`\`
 `;
 const prompt: Runnable = PromptTemplate.fromTemplate(template);
-const model = llmWithStructuredOutput(dietSchema, "ExtractDietInfo", {
-  costs: 2.0,
-  quality: 3.0,
-});
+const model = llmWithStructuredOutput(dietSchema, "ExtractDietInfo");
 
 export const extractDietDataChain = RunnableSequence.from<
   ExtractDietDataChainInput,

@@ -102,16 +102,3 @@ export const transformObjectForPrompt = (
     })
     .join("\n");
 };
-
-// export class DenoKvSaver extends BaseCheckpointSaver {
-//   async getTuple(config: RunnableConfig): Promise<CheckpointTuple | undefined> {
-//     const { thread_id, checkpoint_id  } = config.configurable || {}
-//
-//     const kv = await Deno.openKv("/_storage");
-//     try {
-//       if (checkpoint_id) {
-//
-//       }
-//     }
-//   }
-// }

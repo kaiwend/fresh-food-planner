@@ -30,7 +30,6 @@ export class EdamamRecipe {
       throw new Error("timeMax must be greater than timeMin");
     }
     const ingredientsParam = { name: "q", value: ingredients };
-    console.log({ ingredientsParam });
     const mealTypesParam = { name: "mealType", value: mealTypes };
     const dishTypesParam = { name: "dishType", value: dishTypes };
     const excludedIngredientsParam = {
@@ -60,8 +59,6 @@ export class EdamamRecipe {
         (Array.isArray(param.value) && param.value.length > 0) ||
         typeof param.value === "string",
     );
-
-    // console.info({ allQueryParams });
 
     const url = `${this.baseUrl}?${allQueryParams
       .map(this.transformToEncodedQueryParam)

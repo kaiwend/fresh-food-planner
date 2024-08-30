@@ -1,5 +1,5 @@
 import { EdamamSearchResultV2, NarrowedMetaRecipe } from "@/types/edamam.ts";
-import { EdamamRecipe } from "./EdamamRecipe.ts";
+import { EdamamRecipe } from "@/services/EdamamRecipe.ts";
 
 type RecipeFinderInput = {
   existingIngredients: string[];

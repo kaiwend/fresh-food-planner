@@ -1,12 +1,11 @@
 import { Handlers, PageProps } from "$fresh/server.ts";
 import Plan from "@/components/Plan/index.tsx";
 import { Diet } from "@/types/diet.ts";
-import { EdamamRecipe } from "../../services/EdamamRecipe.ts";
 import { Schedule, ScheduleType } from "@/types/schedule.ts";
 import addDays from "https://unpkg.com/date-fns@3.6.0/addDays.mjs";
-import { RecipeSaver } from "../../services/RecipeSaver.ts";
-import { NarrowedMetaRecipe } from "@/types/edamam.ts";
-import { RecipeFinder } from "../../services/RecipeFinder.ts";
+import { RecipeFinder } from "@/services/RecipeFinder.ts";
+import { ScheduleService } from "@/services/ScheduleService.ts";
+import { DietService } from "@/services/DietSaver.ts";
 
 interface Data {
   diet: Diet;
@@ -42,18 +41,20 @@ const dietHasPreferences = (diet: Diet): boolean =>
 export const handler: Handlers<Data> = {
   GET: async (_req, ctx) => {
     const sessionId = ctx.params.sessionId;
-    const kv = await Deno.openKv();
-    const diet = await kv.get<Diet>([sessionId, "diet"]);
+
+    const dietService = new DietService(sessionId);
+    const diet = await dietService.retrieve();
+    if (!diet) {
+      throw new Error("Diet not found");
+    }
     const schedule: Schedule = [];
 
-    const RecipeSaverService = new RecipeSaver(sessionId);
-    await RecipeSaverService.setup();
+    const scheduleService = new ScheduleService(sessionId);
+
     for (const entry of relevantDates()) {
       for (const scheduleType of [ScheduleType.lunch, ScheduleType.dinner]) {
-        const scheduleEntry = await RecipeSaverService.retrieveRecipe(
-          entry.date,
-          scheduleType,
-        );
+        const key = ScheduleService.constructKey(entry.date, scheduleType);
+        const scheduleEntry = await scheduleService.retrieve(key);
         if (scheduleEntry) {
           schedule.push(scheduleEntry);
         }
@@ -61,14 +62,13 @@ export const handler: Handlers<Data> = {
     }
 
     return ctx.render({
-      diet: diet.value as Diet,
+      diet,
       sessionId,
-      schedule: schedule,
+      schedule,
     });
   },
   POST: async (req, ctx) => {
     const formData = await req.formData();
-    console.log({ formData });
 
     const existingIngredientsFormData = formData.get("existingIngredients") as
       | string
@@ -78,12 +78,11 @@ export const handler: Handlers<Data> = {
       : [];
 
     const scheduleItems = formData.getAll("schedule-item") as string[];
-    console.log({ scheduleItems });
 
     const sessionId = ctx.params.sessionId;
-    const kv = await Deno.openKv();
-    const diet = (await kv.get([sessionId, "diet"])).value;
-    console.log({ existingIngredients, preferences: diet.preferences });
+
+    const dietService = new DietService(sessionId);
+    const diet = await dietService.retrieve();
 
     if (!isDietPresent(diet)) {
       throw new Error("Diet not found");
@@ -103,8 +102,7 @@ export const handler: Handlers<Data> = {
     });
     const recipes = await recipeFinder.findRecipes();
 
-    const RecipeSaverService = new RecipeSaver(sessionId);
-    await RecipeSaverService.setup();
+    const scheduleService = new ScheduleService(sessionId);
 
     let i = 0;
     const schedule: Schedule = [];
@@ -117,10 +115,15 @@ export const handler: Handlers<Data> = {
         throw new Error("Invalid schedule type");
       }
 
-      const scheduleEntry = await RecipeSaverService.saveRecipe(
-        new Date(date),
-        scheduleType,
-        recipes[i],
+      const key = ScheduleService.constructKey(new Date(date), scheduleType);
+      const scheduleEntry = await scheduleService.save(
+        {
+          keyName: key,
+          date,
+          type: scheduleType,
+          edamamRecipe: recipes[i],
+        },
+        key,
       );
       schedule.push(scheduleEntry);
 
