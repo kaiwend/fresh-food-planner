@@ -42,6 +42,8 @@ Questions missing:
 const prompt: Runnable = PromptTemplate.fromTemplate(template);
 const model = llmWithStructuredOutput(evaluateFinishSchema, "EvaluateFinish", {
   temperature: 0.0,
+  costs: 3.0,
+  quality: 2.0,
 });
 
 export const evaluateFinishChain = RunnableSequence.from<
