@@ -11,7 +11,11 @@ const EatingScheduleSelection = (props: { sessionId: string }) => {
       <form id="generate-plan" className="card-body flex flex-col gap-5">
         <div className="card-title">Schedule</div>
         <div className="w-full">
-          <input placeholder="Ingredients at home..." className="w-full" />
+          <input
+            name="existingIngredients"
+            placeholder="Ingredients at home..."
+            className="w-full"
+          />
         </div>
         <div className="flex gap-3 justify-center">
           <div className="flex flex-col gap-3">
@@ -25,16 +29,20 @@ const EatingScheduleSelection = (props: { sessionId: string }) => {
               <input
                 type="checkbox"
                 className="h-5"
-                name={new Date(item.date.setHours(12)).toISOString()}
-                value="lunch"
+                name="schedule-item"
+                value={
+                  new Date(item.date.setHours(12)).toISOString() + "::lunch"
+                }
                 checked={item.lunch}
                 disabled={!item.lunch}
               />
               <input
                 type="checkbox"
                 className="h-5"
-                name={new Date(item.date.setHours(18)).toISOString()}
-                value="dinner"
+                name="schedule-item"
+                value={
+                  new Date(item.date.setHours(18)).toISOString() + "::dinner"
+                }
                 checked={item.dinner}
                 disabled={!item.dinner}
               />

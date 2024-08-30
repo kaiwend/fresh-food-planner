@@ -19,7 +19,7 @@ export class EdamamRecipe {
   private static edamamAppKey = Deno.env.get("EDAMAM_APP_KEY");
 
   static async searchRecipe({
-    query,
+    ingredients,
     mealTypes = [mealType.dinner, mealType.lunch],
     dishTypes = [dishType.mainCourse],
     excludeIngredients = [],
@@ -29,7 +29,8 @@ export class EdamamRecipe {
     if (timeMax && timeMax < timeMin) {
       throw new Error("timeMax must be greater than timeMin");
     }
-    const ingredientsParam = { name: "q", value: query };
+    const ingredientsParam = { name: "q", value: ingredients };
+    console.log({ ingredientsParam });
     const mealTypesParam = { name: "mealType", value: mealTypes };
     const dishTypesParam = { name: "dishType", value: dishTypes };
     const excludedIngredientsParam = {
@@ -60,14 +61,13 @@ export class EdamamRecipe {
         typeof param.value === "string",
     );
 
-    console.log({ allQueryParams });
+    // console.info({ allQueryParams });
 
     const url = `${this.baseUrl}?${allQueryParams
       .map(this.transformToEncodedQueryParam)
       .join("&")}`;
 
     const result = await (await fetch(encodeURI(url))).json();
-    console.log({ result });
     console.log(`Found ${result.hits.length} recipes`);
 
     return result;

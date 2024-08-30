@@ -5,6 +5,8 @@ import { EdamamRecipe } from "../../services/EdamamRecipe.ts";
 import { Schedule, ScheduleType } from "@/types/schedule.ts";
 import addDays from "https://unpkg.com/date-fns@3.6.0/addDays.mjs";
 import { RecipeSaver } from "../../services/RecipeSaver.ts";
+import { NarrowedMetaRecipe } from "@/types/edamam.ts";
+import { RecipeFinder } from "../../services/RecipeFinder.ts";
 
 interface Data {
   diet: Diet;
@@ -66,11 +68,22 @@ export const handler: Handlers<Data> = {
   },
   POST: async (req, ctx) => {
     const formData = await req.formData();
+    console.log({ formData });
+
+    const existingIngredientsFormData = formData.get("existingIngredients") as
+      | string
+      | null;
+    const existingIngredients = existingIngredientsFormData
+      ? existingIngredientsFormData.split(",")
+      : [];
+
+    const scheduleItems = formData.getAll("schedule-item") as string[];
+    console.log({ scheduleItems });
 
     const sessionId = ctx.params.sessionId;
     const kv = await Deno.openKv();
     const diet = (await kv.get([sessionId, "diet"])).value;
-    console.log({ diet });
+    console.log({ existingIngredients, preferences: diet.preferences });
 
     if (!isDietPresent(diet)) {
       throw new Error("Diet not found");
@@ -79,22 +92,31 @@ export const handler: Handlers<Data> = {
       throw new Error("No preferences found");
     }
 
-    const preferences = diet.preferences.join(",");
-    const result = await EdamamRecipe.searchRecipeV2({ query: preferences });
-    const recipes = result.hits;
+    const recipeFinder = new RecipeFinder({
+      existingIngredients,
+      preferredIngredients: diet.preferences,
+      excludedIngredients: [
+        ...(diet.dislikes ?? []),
+        ...(diet.allergies ?? []),
+      ],
+      numberRecipesRequired: scheduleItems.length,
+    });
+    const recipes = await recipeFinder.findRecipes();
 
     const RecipeSaverService = new RecipeSaver(sessionId);
     await RecipeSaverService.setup();
 
     let i = 0;
     const schedule: Schedule = [];
-    for (const [date, scheduleType] of formData.entries()) {
+    for (const item of scheduleItems) {
+      const [date, scheduleType] = item.split("::");
       if (
         scheduleType !== ScheduleType.lunch &&
         scheduleType !== ScheduleType.dinner
       ) {
         throw new Error("Invalid schedule type");
       }
+
       const scheduleEntry = await RecipeSaverService.saveRecipe(
         new Date(date),
         scheduleType,

@@ -45,7 +45,7 @@ interface NextPage {
 }
 
 export type EdamamSearchInput = {
-  query: string;
+  ingredients: string[];
   excludeIngredients?: string[];
   mealTypes?: mealType[];
   dishTypes?: dishType[];
