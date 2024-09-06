@@ -128,3 +128,12 @@ export enum Cuisine {
   southAmerican = "South American",
   southEastAsian = "South East Asian",
 }
+
+export enum dietType {
+  balanced = "balanced",
+  highFiber = "high-fiber",
+  highProtein = "high-protein",
+  lowCarb = "low-carb",
+  lowFat = "low-fat",
+  lowSodium = "low-sodium",
+}

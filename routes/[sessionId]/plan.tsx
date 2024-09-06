@@ -6,6 +6,8 @@ import addDays from "https://unpkg.com/date-fns@3.6.0/addDays.mjs";
 import { RecipeFinder } from "@/services/RecipeFinder.ts";
 import { ScheduleService } from "@/services/ScheduleService.ts";
 import { DietService } from "@/services/DietSaver.ts";
+import { HistorySummarySaver } from "@/services/HistorySummarySaver.ts";
+import { recipeFinderQueryChain } from "@/ai/chains/recipeFinderQuery.ts";
 
 interface Data {
   diet: Diet;
@@ -91,15 +93,23 @@ export const handler: Handlers<Data> = {
       throw new Error("No preferences found");
     }
 
-    const recipeFinder = new RecipeFinder({
-      existingIngredients,
-      preferredIngredients: diet.preferences,
-      excludedIngredients: [
-        ...(diet.dislikes ?? []),
-        ...(diet.allergies ?? []),
-      ],
-      numberRecipesRequired: scheduleItems.length,
+    const historySummarySaver = new HistorySummarySaver(sessionId);
+    const historySummary = await historySummarySaver.retrieve();
+    console.info({ historySummary });
+    if (!historySummary) {
+      throw new Error("No history summary found");
+    }
+    const recipeFinderQuery = await recipeFinderQueryChain.invoke({
+      conversationSummary: historySummary,
     });
+
+    console.info({ recipeFinderQuery });
+
+    const recipeFinder = new RecipeFinder(
+      recipeFinderQuery,
+      existingIngredients,
+      scheduleItems.length,
+    );
     const recipes = await recipeFinder.findRecipes();
 
     const scheduleService = new ScheduleService(sessionId);

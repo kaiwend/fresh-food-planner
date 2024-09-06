@@ -1,32 +1,97 @@
 import { EdamamSearchResultV2, NarrowedMetaRecipe } from "@/types/edamam.ts";
 import { EdamamRecipe } from "@/services/EdamamRecipe.ts";
+import { z } from "zod";
+import { Cuisine, Health, dietType } from "@/types/diet.ts";
 
-type RecipeFinderInput = {
-  existingIngredients: string[];
-  preferredIngredients: string[];
-  excludedIngredients: string[];
-  numberRecipesRequired: number;
-};
+export const recipeQuerySchema = z.object({
+  preferredIngredients: z.optional(
+    z.array(z.string().describe("An ingredient in singular format")),
+  ),
+  excludedIngredients: z.optional(
+    z.array(
+      z
+        .string()
+        .describe(
+          "Ingredient to exclude in singular format, dislikes, allergies etc should be excluded",
+        ),
+    ),
+  ),
+  health: z.optional(
+    z.array(
+      z
+        .nativeEnum(Health)
+        .describe("Classification of diet health if possible"),
+    ),
+  ),
+  cuisineType: z.optional(
+    z.array(
+      z
+        .nativeEnum(Cuisine)
+        .describe("Cuisine type the user likes, if mentioned"),
+    ),
+  ),
+  diet: z.optional(
+    z.array(
+      z
+        .nativeEnum(dietType)
+        .describe("Classification of diet type of the user if possible"),
+    ),
+  ),
+});
+
+export type RecipeFinderInput = z.infer<typeof recipeQuerySchema>;
 
 export class RecipeFinder {
   private recipes: NarrowedMetaRecipe[];
   private existingIngredients: string[];
   private preferredIngredients: string[];
   private excludedIngredients: string[];
+  private diet: dietType[];
+  private health: Health[];
+  private cuisineType: Cuisine[];
+  private commonSearchParameters: (
+    | { diet: dietType[] }
+    | { health: Health[] }
+    | { cuisineType: Cuisine[] }
+  )[];
   private numberRecipesRequired: number;
 
-  constructor({
-    existingIngredients,
-    preferredIngredients,
-    excludedIngredients,
-    numberRecipesRequired,
-  }: RecipeFinderInput) {
+  constructor(
+    {
+      preferredIngredients,
+      excludedIngredients,
+      diet,
+      health,
+      cuisineType,
+    }: RecipeFinderInput,
+    existingIngredients: string[],
+    numberRecipesRequired: number,
+  ) {
     this.existingIngredients = existingIngredients;
-    this.preferredIngredients = preferredIngredients;
-    this.excludedIngredients = excludedIngredients;
+    this.preferredIngredients = preferredIngredients ?? [];
+    this.excludedIngredients = excludedIngredients ?? [];
+    this.diet = diet ?? [];
+    this.health = health ?? [];
+    this.cuisineType = cuisineType ?? [];
+    this.commonSearchParameters = [
+      { diet: this.diet },
+      { health: this.health },
+      { cuisineType: this.cuisineType },
+    ];
     this.numberRecipesRequired = numberRecipesRequired;
     this.recipes = [];
   }
+
+  // private async searchRecipe(
+  //   {
+  //     existingIngredients,
+  //     preferredIngredients,
+  //     excludedIngredients,
+  //   }: EdamamSearchInput,
+  //   common,
+  // ) {
+  //   return await EdamamRecipe.searchRecipe();
+  // }
 
   private pushSingleRecipeIfExists(searchResult: EdamamSearchResultV2) {
     if (searchResult.hits.length > 0) {
@@ -48,6 +113,7 @@ export class RecipeFinder {
           ...this.preferredIngredients,
         ],
         excludeIngredients: this.excludedIngredients,
+        ...this.commonSearchParameters,
       }),
     );
   }
@@ -57,6 +123,7 @@ export class RecipeFinder {
       await EdamamRecipe.searchRecipe({
         ingredients: this.existingIngredients,
         excludeIngredients: this.excludedIngredients,
+        ...this.commonSearchParameters,
       }),
     );
   }
@@ -66,6 +133,7 @@ export class RecipeFinder {
       const result = await EdamamRecipe.searchRecipe({
         ingredients: [ingredient],
         excludeIngredients: this.excludedIngredients,
+        ...this.commonSearchParameters,
       });
 
       this.pushSingleRecipeIfExists(result);
@@ -77,6 +145,7 @@ export class RecipeFinder {
       await EdamamRecipe.searchRecipe({
         ingredients: this.preferredIngredients,
         excludeIngredients: this.excludedIngredients,
+        ...this.commonSearchParameters,
       }),
     );
   }
@@ -86,6 +155,7 @@ export class RecipeFinder {
       const result = await EdamamRecipe.searchRecipe({
         ingredients: [ingredient],
         excludeIngredients: this.excludedIngredients,
+        ...this.commonSearchParameters,
       });
 
       this.pushMultipleRecipesIfExists(result);

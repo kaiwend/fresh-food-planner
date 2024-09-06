@@ -22,6 +22,9 @@ export class EdamamRecipe {
     ingredients,
     mealTypes = [mealType.dinner, mealType.lunch],
     dishTypes = [dishType.mainCourse],
+    health,
+    diet,
+    cuisineType,
     excludeIngredients = [],
     timeMin = 1,
     timeMax,
@@ -29,9 +32,12 @@ export class EdamamRecipe {
     if (timeMax && timeMax < timeMin) {
       throw new Error("timeMax must be greater than timeMin");
     }
-    const ingredientsParam = { name: "q", value: ingredients };
+    const ingredientsParam = { name: "q", value: ingredients.join(" ") };
     const mealTypesParam = { name: "mealType", value: mealTypes };
     const dishTypesParam = { name: "dishType", value: dishTypes };
+    const healthParam = { name: "health", value: health };
+    const dietParam = { name: "diet", value: diet };
+    const cuisineTypeParam = { name: "cuisineType", value: cuisineType };
     const excludedIngredientsParam = {
       name: "excluded",
       value: excludeIngredients,
@@ -52,6 +58,9 @@ export class EdamamRecipe {
       excludedIngredientsParam,
       mealTypesParam,
       dishTypesParam,
+      dietParam,
+      cuisineTypeParam,
+      healthParam,
       randomParam,
       timeParam,
     ].filter(

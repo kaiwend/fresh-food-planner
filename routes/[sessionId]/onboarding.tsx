@@ -5,6 +5,10 @@ import { useSignal } from "@preact/signals";
 import { onboardingGraph } from "@/ai/graphs/onboarding/graph.ts";
 import { ASK_HUMAN_ONBOARDING_NODE } from "@/ai/graphs/onboarding/nodes/askHuman/askHumanOnboarding.ts";
 import { DietService } from "@/services/DietSaver.ts";
+import { HistorySummarySaver } from "@/services/HistorySummarySaver.ts";
+import { historySummaryChain } from "@/ai/chains/historySumamry.ts";
+import { getBufferString } from "langchain/core/messages";
+import { BaseMessage, HumanMessage, AIMessage } from "langchain/core/messages";
 
 interface Data {
   threadId: string;
@@ -68,14 +72,22 @@ export const handler: Handlers<Data> = {
       return await ctx.render({ threadId, sessionId, messages: [] });
     }
 
-    const messages = [
+    const messages: BaseMessage[] = [
       ...oldMessages.filter((message) => message !== LOADING),
       result.lastQuestion,
-    ];
+    ].map((message, index) =>
+      index % 2 === 0 ? new HumanMessage(message) : new AIMessage(message),
+    );
 
     if (result.onboardingComplete) {
       const dietService = new DietService(sessionId);
       await dietService.save(result.diet);
+
+      const historySummary = await historySummaryChain.invoke({
+        chatHistory: getBufferString(messages, "user", "ai"),
+      });
+      const historySummarySaver = new HistorySummarySaver(sessionId);
+      await historySummarySaver.save(historySummary);
 
       const headers = new Headers();
       headers.set("location", `/${sessionId}/plan`);
@@ -88,7 +100,7 @@ export const handler: Handlers<Data> = {
     return await ctx.render({
       threadId,
       sessionId,
-      messages,
+      messages: messages.map((message) => message.content.toString()),
       isLoading: false,
       currentInput: "",
       state: result,
