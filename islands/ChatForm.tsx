@@ -1,5 +1,7 @@
 import { Signal } from "https://esm.sh/v135/@preact/signals-core@1.5.1/dist/signals-core.js";
 import { OnboardingAgentState } from "@/ai/graphs/onboarding/graph.ts";
+import { effect } from "@preact/signals-core";
+import { IS_BROWSER } from "$fresh/runtime.ts";
 
 interface ChatFormProps {
   threadId: string;
@@ -11,6 +13,13 @@ interface ChatFormProps {
 }
 
 export const ChatForm = (props: ChatFormProps) => {
+  effect(() => {
+    if (IS_BROWSER) {
+      const messageElements = document.querySelectorAll(".chat-end");
+      const latestMessage = messageElements[messageElements.length - 1];
+      latestMessage.scrollIntoView({ behavior: "smooth" });
+    }
+  });
   return (
     <>
       <div className="flex flex-col h-[75vh] gap-2 my-2 overflow-y-scroll no-scrollbar">
@@ -56,7 +65,11 @@ export const ChatForm = (props: ChatFormProps) => {
         <input
           type="text"
           name="chat-message"
-          className="grow border-2 border-black px-2 mr-2"
+          className={`grow border-2 border-black px-2 mr-2 ${
+            props.isLoading.value
+              ? "disabled:cursor-not-allowed text-white"
+              : ""
+          }`}
           value={props.currentInput}
           onChange={(e) => {
             props.currentInput.value = e.currentTarget.value;
