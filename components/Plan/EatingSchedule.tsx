@@ -35,7 +35,7 @@ const EatingSchedule = (props: Props) => {
 
   return (
     <div className="mx-auto">
-      <div className="grid gap-5 grid-cols-3 auto-rows-max grid-flow-row items-start">
+      <div className="grid gap-5 grid-cols-1 md:grid-cols-3 auto-rows-max grid-flow-row items-start">
         {props.schedule.length === 0 ? (
           <div></div>
         ) : (
@@ -125,6 +125,19 @@ const EatingSchedule = (props: Props) => {
                         )
                       </div>
                     </div>
+                  </div>
+                  <script
+                    async="async"
+                    src="//platform.getbring.com/widgets/import.js"
+                  ></script>
+
+                  <div
+                    data-bring-import={entry.edamamRecipe.recipe.url}
+                    style="display:none"
+                  >
+                    <a href="https://www.getbring.com">
+                      Bring! Einkaufsliste App f&uuml;r iPhone und Android
+                    </a>
                   </div>
                 </div>
               </Card>
