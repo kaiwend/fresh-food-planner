@@ -126,10 +126,7 @@ const EatingSchedule = (props: Props) => {
                       </div>
                     </div>
                   </div>
-                  <script
-                    async="async"
-                    src="//platform.getbring.com/widgets/import.js"
-                  ></script>
+                  <script src="//platform.getbring.com/widgets/import.js"></script>
 
                   <div
                     data-bring-import={entry.edamamRecipe.recipe.url}

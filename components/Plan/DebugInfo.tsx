@@ -8,7 +8,7 @@ const DebugInfo = (props: {
   historySummary: string;
   recipeFinderQuery: string;
 }) => (
-  <Card>
+  <Card size="medium">
     <div className="card-body">
       <div className="card-title">Debug Info</div>
       <InfoBlocks

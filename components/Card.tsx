@@ -11,7 +11,7 @@ const Card = ({ children, size }: CardProps) => {
       case "small":
         return "w-[380px]";
       case "medium":
-        return "w-[680px]";
+        return "w-[780px]";
       case "large":
         return "w-[1080px]";
       default:
