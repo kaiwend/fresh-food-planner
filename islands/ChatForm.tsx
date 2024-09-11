@@ -12,20 +12,33 @@ interface ChatFormProps {
 }
 
 export const ChatForm = (props: ChatFormProps) => {
-  const messageClasses = "rounded px-4 py-2";
-
   return (
     <>
       <div className="flex flex-col h-[75vh] gap-2 my-2 overflow-y-scroll no-scrollbar">
         {props.messages.value.map((message, index) => (
           <div
-            className={
-              index % 2 === 0
-                ? `bg-blue-300 self-start mr-14 ${messageClasses}`
-                : `bg-red-300 self-end ml-14 ${messageClasses}`
-            }
+            className={index % 2 === 0 ? "chat chat-start" : "chat chat-end"}
           >
-            {message}
+            {index % 2 !== 0 && (
+              <div className="chat-image avatar">
+                <div className="w-20 rounded-full">
+                  <img alt="AI Avatar" src="/avatar.png" />
+                </div>
+              </div>
+            )}
+            <div
+              className={
+                index % 2 === 0
+                  ? "chat-bubble chat-bubble-primary"
+                  : "chat-bubble chat-bubble-secondary mb-8"
+              }
+            >
+              {message === "Loading" ? (
+                <div className="loading loading-dots loading-md"></div>
+              ) : (
+                message
+              )}
+            </div>
           </div>
         ))}
       </div>
