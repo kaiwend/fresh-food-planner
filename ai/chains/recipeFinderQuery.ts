@@ -16,7 +16,9 @@ const prompt = PromptTemplate.fromTemplate(
   `You are an expert in creating queries for recipe search engines. Your goal is to look at the summary of a conversation that was aimed to obtain a user's diet preferences. Try to derive as much as makes sense. It is fine to leave properties empty.
 
 # conversation summary:
+\`\`\`
 {conversationSummary}
+\`\`\`
 
 Call the attached tool to help you with the query creation. The tool schema has enum values. When filling the value make sure that it is exactly one of the possible values and else leave it empty`,
 );

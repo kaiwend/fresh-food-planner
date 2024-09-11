@@ -2,7 +2,11 @@ import Card from "@/components/Card.tsx";
 import InfoBlocks from "@/components/InfoBlocks.tsx";
 
 const formatValue = (value: string | string[] | undefined) =>
-  Array.isArray(value) ? value.join(", ") : value ?? "N/A";
+  Array.isArray(value)
+    ? value.join(", ")
+    : typeof value === "string" && value.length > 0
+      ? value
+      : "N/A";
 
 const DebugInfo = (props: {
   historySummary: string;

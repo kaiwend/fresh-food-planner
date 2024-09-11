@@ -4,7 +4,6 @@ import { ChatForm } from "../../islands/ChatForm.tsx";
 import { useSignal } from "@preact/signals";
 import { onboardingGraph } from "@/ai/graphs/onboarding/graph.ts";
 import { ASK_HUMAN_ONBOARDING_NODE } from "@/ai/graphs/onboarding/nodes/askHuman/askHumanOnboarding.ts";
-import { DietService } from "@/services/DietSaver.ts";
 import { HistorySummarySaver } from "@/services/HistorySummarySaver.ts";
 import { historySummaryChain } from "@/ai/chains/historySumamry.ts";
 import { getBufferString } from "langchain/core/messages";

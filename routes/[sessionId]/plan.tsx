@@ -1,14 +1,13 @@
 import { Handlers, PageProps } from "$fresh/server.ts";
 import Plan from "@/components/Plan/index.tsx";
-import { Diet } from "@/types/diet.ts";
 import { Schedule, ScheduleType } from "@/types/schedule.ts";
 import addDays from "https://unpkg.com/date-fns@3.6.0/addDays.mjs";
 import { RecipeFinder } from "@/services/RecipeFinder.ts";
 import { ScheduleService } from "@/services/ScheduleService.ts";
-import { DietService } from "@/services/DietSaver.ts";
 import { HistorySummarySaver } from "@/services/HistorySummarySaver.ts";
 import { recipeFinderQueryChain } from "@/ai/chains/recipeFinderQuery.ts";
 import { RecipeFinderQuerySaver } from "@/services/RecipeFinderSaver.ts";
+import { historyMergeChain } from "@/ai/chains/historyMerge.ts";
 
 interface Data {
   historySummary: string;
@@ -84,12 +83,24 @@ export const handler: Handlers<Data> = {
 
     const sessionId = ctx.params.sessionId;
 
+    let historySummary;
     const historySummarySaver = new HistorySummarySaver(sessionId);
-    const historySummary = await historySummarySaver.retrieve();
+    historySummary = await historySummarySaver.retrieve();
     console.info({ historySummary });
+
     if (!historySummary) {
       throw new Error("No history summary found");
     }
+
+    if (feedback && feedback.trim().length > 0) {
+      historySummary = await historyMergeChain.invoke({
+        existingSummary: historySummary,
+        newChatMessage: feedback,
+      });
+      console.log("updated: ", { historySummary });
+      await historySummarySaver.save(historySummary);
+    }
+
     const recipeFinderQuery = await recipeFinderQueryChain.invoke({
       conversationSummary: historySummary,
     });
