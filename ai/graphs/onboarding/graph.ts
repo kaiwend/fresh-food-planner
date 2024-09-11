@@ -15,12 +15,18 @@ import {
   EXTRACT_DIET_DATA_NODE_NAME,
   extractDietData,
 } from "@/ai/graphs/onboarding/nodes/extractDietData.ts";
+import {
+  GENERATE_FINISH_SENTENCE_NODE_NAME,
+  generateFinishSentence,
+} from "@/ai/graphs/onboarding/nodes/generateFinishSentence.ts";
 
 export const onboardingSchema = z.object({
-  onboardingComplete: z
-    .boolean()
-    .default(false)
-    .describe("Flag to indicate if the onboarding is complete"),
+  onboardingComplete: z.optional(
+    z
+      .boolean()
+      .default(false)
+      .describe("Flag to indicate if the onboarding is complete"),
+  ),
   diet: dietSchema,
 });
 
@@ -69,6 +75,7 @@ workflow
   .addNode(EXTRACT_DIET_DATA_NODE_NAME, extractDietData)
   .addNode(GENERATE_ONBOARDING_QUESTION_NODE_NAME, generateOnboardingQuestion)
   .addNode(ASK_HUMAN_ONBOARDING_NODE, askHumanOnboardingNode)
+  .addNode(GENERATE_FINISH_SENTENCE_NODE_NAME, generateFinishSentence)
 
   .addEdge(START, EXTRACT_DIET_DATA_NODE_NAME)
   .addEdge(GENERATE_ONBOARDING_QUESTION_NODE_NAME, ASK_HUMAN_ONBOARDING_NODE)
@@ -77,11 +84,12 @@ workflow
     EXTRACT_DIET_DATA_NODE_NAME,
     ({ onboardingComplete }) => {
       if (onboardingComplete) {
-        return END;
+        return GENERATE_FINISH_SENTENCE_NODE_NAME;
       }
       return GENERATE_ONBOARDING_QUESTION_NODE_NAME;
     },
-  );
+  )
+  .addEdge(GENERATE_FINISH_SENTENCE_NODE_NAME, ASK_HUMAN_ONBOARDING_NODE);
 
 const checkpointer = new MemorySaver();
 export const onboardingGraph = workflow.compile({

@@ -88,13 +88,6 @@ export const handler: Handlers<Data> = {
       });
       const historySummarySaver = new HistorySummarySaver(sessionId);
       await historySummarySaver.save(historySummary);
-
-      const headers = new Headers();
-      headers.set("location", `/${sessionId}/plan`);
-      return new Response(null, {
-        status: 302,
-        headers,
-      });
     }
 
     return await ctx.render({

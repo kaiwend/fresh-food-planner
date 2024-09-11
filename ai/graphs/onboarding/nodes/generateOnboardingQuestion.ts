@@ -9,7 +9,7 @@ export const GENERATE_ONBOARDING_QUESTION_NODE_NAME =
 export const generateOnboardingQuestion = async (
   state: OnboardingAgentState,
 ) => {
-  const lastQuestion = await generateOnboardingQuestionChain.invoke({
+  const nextQuestion = await generateOnboardingQuestionChain.invoke({
     input: state.input,
     chatHistory: state.chatHistory,
     dietInfo: transformObjectForPrompt(state.diet),
@@ -25,9 +25,9 @@ export const generateOnboardingQuestion = async (
 
   console.log(
     "[generateOnboardingQuesiton] lastQuestion: ",
-    lastQuestion,
+    nextQuestion,
     "\n",
   );
 
-  return { lastQuestion };
+  return { lastQuestion: nextQuestion };
 };

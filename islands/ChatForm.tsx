@@ -1,5 +1,4 @@
 import { Signal } from "https://esm.sh/v135/@preact/signals-core@1.5.1/dist/signals-core.js";
-import { transformObjectForPrompt } from "@/ai/graphs/utils.ts";
 import { OnboardingAgentState } from "@/ai/graphs/onboarding/graph.ts";
 
 interface ChatFormProps {
@@ -71,17 +70,28 @@ export const ChatForm = (props: ChatFormProps) => {
           name="all-chat-messages"
           value={JSON.stringify(props.messages)}
         />
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:bg-red-400"
-          type="submit"
-          form="chat"
-          formaction={`/${props.sessionId}/onboarding`}
-          f-partial={`/${props.sessionId}/onboarding`}
-          formmethod="POST"
-          disabled={props.isLoading.value}
-        >
-          Send
-        </button>
+        <div className="flex gap-1">
+          {props.currentState?.onboardingComplete && (
+            <a
+              className="btn btn-secondary rounded disabled:btn-disabled"
+              href={`/${props.sessionId}/plan`}
+              disabled={props.isLoading.value}
+            >
+              Start Planning
+            </a>
+          )}
+          <button
+            className="btn btn-primary rounded disabled:btn-disabled"
+            type="submit"
+            form="chat"
+            formaction={`/${props.sessionId}/onboarding`}
+            f-partial={`/${props.sessionId}/onboarding`}
+            formmethod="POST"
+            disabled={props.isLoading.value}
+          >
+            Send
+          </button>
+        </div>
       </form>
     </>
   );

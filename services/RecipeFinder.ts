@@ -5,7 +5,13 @@ import { Cuisine, Health, dietType } from "@/types/diet.ts";
 
 export const recipeQuerySchema = z.object({
   preferredIngredients: z.optional(
-    z.array(z.string().describe("An ingredient in singular format")),
+    z.array(
+      z
+        .string()
+        .describe(
+          "An ingredient in singular format, feel free to transform plurals and slang words etc.",
+        ),
+    ),
   ),
   excludedIngredients: z.optional(
     z.array(
@@ -20,21 +26,27 @@ export const recipeQuerySchema = z.object({
     z.array(
       z
         .nativeEnum(Health)
-        .describe("Classification of diet health if possible"),
+        .describe(
+          "Classification of diet health if mentioned. Has to be one of the options provided",
+        ),
     ),
   ),
   cuisineType: z.optional(
     z.array(
       z
         .nativeEnum(Cuisine)
-        .describe("Cuisine type the user likes, if mentioned"),
+        .describe(
+          "Cuisine type the user likes, if mentioned. Has to be one of the options provided",
+        ),
     ),
   ),
   diet: z.optional(
     z.array(
       z
         .nativeEnum(dietType)
-        .describe("Classification of diet type of the user if possible"),
+        .describe(
+          "Classification of diet type of the user if mentioned. Has to be one of the options provided",
+        ),
     ),
   ),
 });
