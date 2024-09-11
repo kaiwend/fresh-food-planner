@@ -37,7 +37,7 @@ const EatingSchedule = (props: Props) => {
     <div className="mx-auto">
       <div className="grid gap-5 grid-cols-3 auto-rows-max grid-flow-row items-start">
         {props.schedule.length === 0 ? (
-          <div>no recipes</div>
+          <div></div>
         ) : (
           props.schedule
             .filter(hasRecipe)

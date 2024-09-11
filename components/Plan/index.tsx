@@ -21,7 +21,6 @@ const Plan = (props: Props) => (
     <div className="gap-5 flex">
       <EatingSchedule schedule={props.schedule} />
     </div>
-    <input placeholder="Want to change something?" />
   </div>
 );
 

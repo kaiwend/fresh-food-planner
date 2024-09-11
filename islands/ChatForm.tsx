@@ -16,13 +16,7 @@ export const ChatForm = (props: ChatFormProps) => {
 
   return (
     <>
-      <div>
-        <div className="flex flex-col">
-          <div>Diet: {transformObjectForPrompt(props.currentState?.diet)}</div>
-        </div>
-      </div>
-      <hr className="border-black" />
-      <div className="flex flex-col h-[70vh] gap-2 my-2 overflow-y-scroll no-scrollbar">
+      <div className="flex flex-col h-[75vh] gap-2 my-2 overflow-y-scroll no-scrollbar">
         {props.messages.value.map((message, index) => (
           <div
             className={
