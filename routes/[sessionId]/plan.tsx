@@ -36,21 +36,10 @@ export const relevantDates = () => {
   });
 };
 
-const isDietPresent = (potentialDiet: unknown): potentialDiet is Diet =>
-  !!potentialDiet && "preferences" in (potentialDiet as Diet);
-
-const dietHasPreferences = (diet: Diet): boolean =>
-  !!diet.preferences && diet.preferences.length > 0;
-
 export const handler: Handlers<Data> = {
   GET: async (_req, ctx) => {
     const sessionId = ctx.params.sessionId;
 
-    const dietService = new DietService(sessionId);
-    const diet = await dietService.retrieve();
-    if (!diet) {
-      throw new Error("Diet not found");
-    }
     const schedule: Schedule = [];
 
     const scheduleService = new ScheduleService(sessionId);
@@ -90,17 +79,10 @@ export const handler: Handlers<Data> = {
 
     const scheduleItems = formData.getAll("schedule-item") as string[];
 
+    const feedback = formData.get("feedback") as string | null;
+    console.log({ feedback });
+
     const sessionId = ctx.params.sessionId;
-
-    const dietService = new DietService(sessionId);
-    const diet = await dietService.retrieve();
-
-    if (!isDietPresent(diet)) {
-      throw new Error("Diet not found");
-    }
-    if (!dietHasPreferences(diet) || !diet.preferences) {
-      throw new Error("No preferences found");
-    }
 
     const historySummarySaver = new HistorySummarySaver(sessionId);
     const historySummary = await historySummarySaver.retrieve();

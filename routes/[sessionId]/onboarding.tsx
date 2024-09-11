@@ -80,9 +80,6 @@ export const handler: Handlers<Data> = {
     );
 
     if (result.onboardingComplete) {
-      const dietService = new DietService(sessionId);
-      await dietService.save(result.diet);
-
       const historySummary = await historySummaryChain.invoke({
         chatHistory: getBufferString(messages, "user", "ai"),
       });
