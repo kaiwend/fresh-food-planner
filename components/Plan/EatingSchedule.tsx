@@ -43,13 +43,14 @@ const EatingSchedule = (props: Props) => {
             .filter(hasRecipe)
             .map((entry: ScheduleEntryWithRecipe) => (
               <Card>
-                <figure>
-                  <img
-                    src={entry.edamamRecipe.recipe.label}
-                    alt={`Image of "${entry.edamamRecipe.recipe.label}"`}
-                  />
-                </figure>
                 <div className="card-body">
+                  <figure>
+                    <img
+                      src={`/recipe${Math.floor(Math.random() * 13)}.png`}
+                      alt={`Image of "${entry.edamamRecipe.recipe.label}"`}
+                      className="rounded mb-2"
+                    />
+                  </figure>
                   <h2 className="card-title text-2xl font-semibold leading-none tracking-tight text-gray-400">
                     {`${new Date(entry.date).toLocaleDateString("en-us", {
                       weekday: "short",

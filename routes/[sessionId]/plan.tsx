@@ -8,9 +8,11 @@ import { ScheduleService } from "@/services/ScheduleService.ts";
 import { DietService } from "@/services/DietSaver.ts";
 import { HistorySummarySaver } from "@/services/HistorySummarySaver.ts";
 import { recipeFinderQueryChain } from "@/ai/chains/recipeFinderQuery.ts";
+import { RecipeFinderQuerySaver } from "@/services/RecipeFinderSaver.ts";
 
 interface Data {
-  diet: Diet;
+  historySummary: string;
+  recipeFinderQuery: string;
   schedule: Schedule;
   sessionId: string;
 }
@@ -63,8 +65,15 @@ export const handler: Handlers<Data> = {
       }
     }
 
+    const historySummaryService = new HistorySummarySaver(sessionId);
+    const historySummary = await historySummaryService.retrieve();
+
+    const recipeFinderQuerySaver = new RecipeFinderQuerySaver(sessionId);
+    const recipeFinderQuery = await recipeFinderQuerySaver.retrieve();
+
     return ctx.render({
-      diet,
+      historySummary: historySummary ?? "",
+      recipeFinderQuery: recipeFinderQuery ?? "",
       sessionId,
       schedule,
     });
@@ -102,6 +111,9 @@ export const handler: Handlers<Data> = {
     const recipeFinderQuery = await recipeFinderQueryChain.invoke({
       conversationSummary: historySummary,
     });
+
+    const recipeFinderQuerySaver = new RecipeFinderQuerySaver(sessionId);
+    await recipeFinderQuerySaver.save(JSON.stringify(recipeFinderQuery));
 
     console.info({ recipeFinderQuery });
 
@@ -142,13 +154,19 @@ export const handler: Handlers<Data> = {
 
     console.log(`User requested ${schedule.length} meals`);
 
-    return ctx.render({ diet: diet, sessionId, schedule });
+    return ctx.render({
+      historySummary,
+      recipeFinderQuery: JSON.stringify(recipeFinderQuery),
+      sessionId,
+      schedule,
+    });
   },
 };
 
 const PlanPage = (props: PageProps<Data>) => (
   <Plan
-    diet={props.data.diet}
+    historySummary={props.data.historySummary}
+    recipeFinderQuery={props.data.recipeFinderQuery}
     schedule={props.data.schedule}
     sessionId={props.data.sessionId}
   />

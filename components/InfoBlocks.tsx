@@ -15,7 +15,9 @@ export default InfoBlocks;
 
 const SingleInfoBlock = (props: { title: string; value: string }) => (
   <div className="flex flex-col space-y-1">
-    <div className="text-sm text-muted-foreground">{props.title}</div>
-    <div className="text-sm font-medium leading-none">{props.value}</div>
+    <div className="text-sm font-medium text-muted-foreground">
+      {props.title}
+    </div>
+    <div className="text-sm leading-none">{props.value}</div>
   </div>
 );
