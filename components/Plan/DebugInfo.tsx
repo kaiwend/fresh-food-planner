@@ -13,8 +13,14 @@ const DebugInfo = (props: {
       <div className="card-title">Debug Info</div>
       <InfoBlocks
         items={[
-          { title: "History Summary", value: props.historySummary },
-          { title: "Recipe Finder Query", value: props.recipeFinderQuery },
+          {
+            title: "History Summary",
+            value: formatValue(props.historySummary),
+          },
+          {
+            title: "Recipe Finder Query",
+            value: formatValue(props.recipeFinderQuery),
+          },
         ]}
       />
     </div>

@@ -1,7 +1,6 @@
 import EatingScheduleSelection from "@/components/Plan/EatingScheduleSelection.tsx";
 import { Schedule } from "@/types/schedule.ts";
 import EatingSchedule from "@/components/Plan/EatingSchedule.tsx";
-import GeneralFeedback from "@/components/Plan/GeneralFeedback.tsx";
 import DebugInfo from "@/components/Plan/DebugInfo.tsx";
 
 interface Props {
@@ -13,8 +12,7 @@ interface Props {
 
 const Plan = (props: Props) => (
   <div className="p-10 flex flex-col gap-5">
-    <div className="gap-5 flex mx-auto">
-      <GeneralFeedback />
+    <div className="flex flex-wrap gap-5 mx-auto">
       <DebugInfo
         historySummary={props.historySummary}
         recipeFinderQuery={props.recipeFinderQuery}

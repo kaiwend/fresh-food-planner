@@ -1,5 +1,5 @@
 import { MetaRecipe, Recipe } from "@/types/recipe.ts";
-import { dietType, Health, dishType, mealType, Cuisine } from "@/types/diet.ts";
+import { DietType, Health, dishType, mealType, Cuisine } from "@/types/diet.ts";
 
 interface EdamamSearchResult {
   from: number;
@@ -51,7 +51,7 @@ export type EdamamSearchInput = {
   dishTypes?: dishType[];
   health?: Health[];
   cuisineType?: Cuisine[];
-  diet?: dietType[];
+  diet?: DietType[];
   timeMin?: number;
   timeMax?: number;
 };

@@ -1,7 +1,7 @@
 import { EdamamSearchResultV2, NarrowedMetaRecipe } from "@/types/edamam.ts";
 import { EdamamRecipe } from "@/services/EdamamRecipe.ts";
 import { z } from "zod";
-import { Cuisine, Health, dietType } from "@/types/diet.ts";
+import { Cuisine, Health, DietType } from "@/types/diet.ts";
 
 export const recipeQuerySchema = z.object({
   preferredIngredients: z.optional(
@@ -43,7 +43,7 @@ export const recipeQuerySchema = z.object({
   diet: z.optional(
     z.array(
       z
-        .nativeEnum(dietType)
+        .nativeEnum(DietType)
         .describe(
           "Classification of diet type of the user if mentioned. Has to be one of the options provided",
         ),
@@ -58,11 +58,11 @@ export class RecipeFinder {
   private existingIngredients: string[];
   private preferredIngredients: string[];
   private excludedIngredients: string[];
-  private diet: dietType[];
+  private diet: DietType[];
   private health: Health[];
   private cuisineType: Cuisine[];
   private commonSearchParameters: (
-    | { diet: dietType[] }
+    | { diet: DietType[] }
     | { health: Health[] }
     | { cuisineType: Cuisine[] }
   )[];

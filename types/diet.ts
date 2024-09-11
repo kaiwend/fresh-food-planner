@@ -129,7 +129,7 @@ export enum Cuisine {
   southEastAsian = "South East Asian",
 }
 
-export enum dietType {
+export enum DietType {
   balanced = "balanced",
   highFiber = "high-fiber",
   highProtein = "high-protein",

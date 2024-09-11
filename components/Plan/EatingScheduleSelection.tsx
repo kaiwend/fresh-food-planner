@@ -17,6 +17,13 @@ const EatingScheduleSelection = (props: { sessionId: string }) => {
             className="w-full"
           />
         </div>
+        <div className="w-full">
+          <input
+            name="feedback"
+            placeholder="Add feedback..."
+            className="w-full"
+          />
+        </div>
         <div className="flex gap-3 justify-center">
           <div className="flex flex-col gap-3">
             <div className="h-5"></div>
@@ -56,7 +63,6 @@ const EatingScheduleSelection = (props: { sessionId: string }) => {
           formaction={`/${props.sessionId}/plan`}
           f-partial={`/${props.sessionId}/plan`}
           formmethod="POST"
-          // disabled={props.isLoading.value}
         >
           Generate Meal Plan
         </button>
