@@ -22,15 +22,15 @@ export const recipeQuerySchema = z.object({
         ),
     ),
   ),
-  health: z.optional(
-    z.array(
-      z
-        .nativeEnum(Health)
-        .describe(
-          "Classification of diet health if mentioned. Has to be one of the options provided",
-        ),
-    ),
-  ),
+  // health: z.optional(
+  //   z.array(
+  //     z
+  //       .nativeEnum(Health)
+  //       .describe(
+  //         "Classification of diet health if mentioned. Has to be one of the options provided",
+  //       ),
+  //   ),
+  // ),
   cuisineType: z.optional(
     z.array(
       z
@@ -59,7 +59,7 @@ export class RecipeFinder {
   private preferredIngredients: string[];
   private excludedIngredients: string[];
   private diet: DietType[];
-  private health: Health[];
+  // private health: Health[];
   private cuisineType: Cuisine[];
   private commonSearchParameters: (
     | { diet: DietType[] }
@@ -73,7 +73,7 @@ export class RecipeFinder {
       preferredIngredients,
       excludedIngredients,
       diet,
-      health,
+      // health,
       cuisineType,
     }: RecipeFinderInput,
     existingIngredients: string[],
@@ -83,11 +83,11 @@ export class RecipeFinder {
     this.preferredIngredients = preferredIngredients ?? [];
     this.excludedIngredients = excludedIngredients ?? [];
     this.diet = diet ?? [];
-    this.health = health ?? [];
+    // this.health = health ?? [];
     this.cuisineType = cuisineType ?? [];
     this.commonSearchParameters = [
       { diet: this.diet },
-      { health: this.health },
+      // { health: this.health },
       { cuisineType: this.cuisineType },
     ];
     this.numberRecipesRequired = numberRecipesRequired;

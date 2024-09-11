@@ -19,8 +19,7 @@ const prompt = PromptTemplate.fromTemplate(
 \`\`\`
 {conversationSummary}
 \`\`\`
-
-Call the attached tool to help you with the query creation. The tool schema has enum values. When filling the value make sure that it is exactly one of the possible values and else leave it empty`,
+`,
 );
 
 const model = llmWithStructuredOutput(recipeQuerySchema, "RecipeFinderQuery");
